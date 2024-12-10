@@ -8,7 +8,7 @@ Eduktok is a mobile app designed to make language learning interactive and engag
 - Progress tracking
 
 ## Demo
-<p align="center">
+[<p align="center">
   <video width="45%" height="auto" controls>
     <source src="https://github.com/user-attachments/assets/36ccc22d-7949-4f94-8099-955d767b28ff" type="video/mp4">
     Your browser does not support the video tag.
@@ -17,7 +17,8 @@ Eduktok is a mobile app designed to make language learning interactive and engag
     <source src="https://github.com/user-attachments/assets/a33cef2a-9bf6-43dc-8a5e-6867fc494f49" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-</p>
+</p>](https://github.com/user-attachments/assets/36ccc22d-7949-4f94-8099-955d767b28ff  
+https://github.com/user-attachments/assets/a33cef2a-9bf6-43dc-8a5e-6867fc494f49)
 
 ## Getting Started
 Clone the repository and open it in Xcode to begin development:
