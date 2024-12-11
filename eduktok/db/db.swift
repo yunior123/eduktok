@@ -13,18 +13,6 @@ import Combine
 class Db {
     let firestore = Firestore.firestore()
     
-    //    func addMessage(message: String) async throws {
-    //        guard let email = Auth.auth().currentUser?.email else {
-    //            return
-    //        }
-    //        let collectionRef = firestore.collection("messages")
-    //        let data: [String: Any] = [
-    //            "message": message,
-    //            "userEmail": email
-    //        ]
-    //        _ = try await collectionRef.addDocument(data: data)
-    //    }
-    
     func findUser(email: String) async throws -> UserModel? {
         let usersRef = firestore.collection("users")
         let query = usersRef.whereField("email", isEqualTo: email).limit(to: 1)

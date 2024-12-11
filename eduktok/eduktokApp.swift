@@ -10,6 +10,19 @@ import FirebaseCore
 import GoogleSignIn
 import GoogleSignInSwift
 
+// TODO: Add to settings
+//    func addMessage(message: String) async throws {
+//        guard let email = Auth.auth().currentUser?.email else {
+//            return
+//        }
+//        let collectionRef = firestore.collection("messages")
+//        let data: [String: Any] = [
+//            "message": message,
+//            "userEmail": email
+//        ]
+//        _ = try await collectionRef.addDocument(data: data)
+//    }
+
 //TODO: add notifications, populate cards
 //TODO: In the lessons view, the selected circle inside the scrollView should be centered. (it should move to the center?)
 //TODO: Remove API keys
