@@ -8,12 +8,23 @@
 import SwiftUI
 import Speech
 import AVFoundation
+import Foundation
+import StoreKit
+import OSLog
+typealias SKTransaction = StoreKit.Transaction
+
+
+private let logger = Logger(subsystem: "Eduktok", category: "HomeView")
+
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State var isLoading: Bool = true
+    @State private var isPro = false
+
+        
     var body: some View {
-        VStack{
+        VStack {
             Spacer()
             if let userModel = $viewModel.userModel.wrappedValue {
                 TabView {
@@ -41,19 +52,17 @@ struct HomeView: View {
                                 .id(2)
                         }
                     }
-                    
-//                    MemoryCardsView(userModel: userModel)
-//                        .tabItem {
-//                            Label("MemoryCards", systemImage: "checklist")
-//                        }
-//                        .tag(3)
-//                        .id(3)
+                    StoreKitProViewMP()
+                        .tabItem {
+                            Label("Store", systemImage: "checklist")
+                        }
+                        .tag(3)
+                        .id(3)
                     SettingsView().tabItem {
                         Label("Settings", systemImage: "gear")
                     }.tag(6).id(6)
                 }
             }
-            
         }
         .navigationTitle("Eduktok")
         .onAppear {
@@ -62,8 +71,24 @@ struct HomeView: View {
                 await requestPermissions()
             }
         }
+        .onInAppPurchaseStart { product in
+            print("onInAppPurchaseStart called")
+            print(product)
+        }
+        .currentEntitlementTask(for: Products.lifetime) { taskState in
+            print("currentEntitlementTask called")
+            logger.info("Checking non renewable subscription status")
+            
+            if let verification = taskState.transaction,
+                    let transaction = try? verification.payloadValue {
+                print("Transaction: \(transaction)")
+                     isPro = transaction.revocationDate == nil
+                 } else {
+                     isPro = false
+                 }
+        }
+
     }
-    
 }
 
 func requestPermissions() async{

@@ -32,26 +32,6 @@ class Db {
         return documentRef.documentID
     }
     
-    func addTemplate(template: TemplateModel) async throws -> String {
-        let collectionRef = firestore.collection("templates")
-        let documentRef = try collectionRef.addDocument(from: template)
-        return documentRef.documentID
-    }
-    
-    func deleteTemplate(id: String) async throws {
-        let docRef = firestore.collection("templates").document(id)
-        try await docRef.delete()
-    }
-    
-    func deleteTemplates(userId: String) async throws {
-        let collectionRef = firestore.collection("templates")
-        let querySnapshot = try await collectionRef.whereField("createdBy", isEqualTo: userId).getDocuments()
-        
-        for document in querySnapshot.documents {
-            try await document.reference.delete()
-        }
-    }
-    
     func deleteUser(id: String) async throws {
         let docRef = firestore.collection("users").document(id)
         try await docRef.delete()
@@ -61,13 +41,6 @@ class Db {
         let docRef = firestore.collection(collection).document(docId)
         try await docRef.updateData(model)
     }
-    
-    
-    func updateTemplate(template: TemplateModel) async throws{
-        let docRef = firestore.collection("templates").document(template.id)
-        try docRef.setData(from: template)
-    }
-    
     
     func updateUser(user: UserModel) async throws {
         guard let encodedData = try? JSONEncoder().encode(user) else {
@@ -84,20 +57,6 @@ class Db {
     func unitsListener(language: String ) -> Query {
         return firestore.collection("units")
             .whereField("language", isEqualTo: language)
-    }
-    
-    func templatesListener(userId: String ) -> Query {
-        return firestore.collection("templates")
-            .whereField("nextDate", isLessThan: Timestamp(date: Date()))
-            .whereField("createdBy", isEqualTo: userId)
-        
-    }
-    
-    func doneListener(userId: String) -> Query{
-        firestore.collection("templates")
-            .whereField("nextDate", isGreaterThan: Timestamp(date: Date()))
-            .whereField("createdBy", isEqualTo: userId)
-        
     }
     
     func userListener(email: String) -> Query {

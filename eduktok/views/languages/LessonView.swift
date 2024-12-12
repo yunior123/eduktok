@@ -65,7 +65,8 @@ struct LessonView: View {
     }
     
     var body: some View {
-        VStack{
+        
+        VStack {
             let currentLessonModel = unit.lessons[$currentLesson.wrappedValue]
             
             if $isCompleted.wrappedValue || isUnitComplete() {
@@ -76,50 +77,44 @@ struct LessonView: View {
                         counter += 4
                         currentLesson = 0
                     }
-            }
-            else if let listeningModel = currentLessonModel as? GListeningModel {
+            } else if let listeningModel = currentLessonModel as? GListeningModel {
                 GListeningView(model: listeningModel, onFinished: nextView)
                     .id(currentLesson)
-            }
-            else if let listeningModel = currentLessonModel as? GListeningFourModel {
+            } else if let listeningModel = currentLessonModel as? GListeningFourModel {
                 GListeningFourView(model: listeningModel, onFinished: nextView)
                     .id(currentLesson)
-            }else if let speakingModel = currentLessonModel as? GSpeakingModel {
+            } else if let speakingModel = currentLessonModel as? GSpeakingModel {
                 GSpeakingView(
-                    model: speakingModel, onFinished: nextView, languageCode: getLanguageCode(selectedLanguage: selectedLanguage)
+                    model: speakingModel,
+                    onFinished: nextView,
+                    languageCode: getLanguageCode(selectedLanguage: selectedLanguage)
                 )
                 .id(currentLesson)
-            }
-            //            else if let writingModel = currentLessonModel as? GWritingModel {
-            //                GWritingView(model: writingModel, onFinished: nextView)
-            //                    .id(currentLesson)
-            //            }
-            else if let interpretingModel = currentLessonModel as? GInterpretingModel {
+            } else if let interpretingModel = currentLessonModel as? GInterpretingModel {
                 GInterpretingView(model: interpretingModel, onFinished: nextView)
                     .id(currentLesson)
             }
+            
             if !(isUnitComplete()) {
-                if !(isUnitComplete()) {
-                    GeometryReader { geometry in
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 15) {
-                                ForEach(0...unit.lessons.count - 1, id: \.self) { lessonIndex in
-                                    let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id!]?[getLessonId(index: lessonIndex)]) != nil)
-                                    
-                                    LessonButton(lessonNumber: lessonIndex + 1, isCompleted: isLessonCompleted, currentLesson: currentLesson)
-                                        .onTapGesture {
-                                            currentLesson = lessonIndex
-                                        }
-                                }
+                GeometryReader { geometry in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 15) {
+                            ForEach(0...unit.lessons.count - 1, id: \.self) { lessonIndex in
+                                let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id!]?[getLessonId(index: lessonIndex)]) != nil)
+                                
+                                LessonButton(lessonNumber: lessonIndex + 1, isCompleted: isLessonCompleted, currentLesson: currentLesson)
+                                    .onTapGesture {
+                                        currentLesson = lessonIndex
+                                    }
                             }
-                            .padding()
-                            .frame(minWidth: geometry.size.width, alignment: .center)
                         }
+                        .padding()
+                        .frame(minWidth: geometry.size.width, alignment: .center)
                     }
-                    .frame(height: 80) // Adjust height as needed
                 }
-                
+                .frame(height: 80) // Adjust height as needed
             }
+            
             if showingDelSuccessMessage {
                 Text("Lesson deleted successfully!")
                     .foregroundColor(.green)
@@ -140,9 +135,9 @@ struct LessonView: View {
                 }
             }
             
-            
         }
     }
+    
     
     private func findFirstIncompleteLessonIndex() -> Int? {
         guard let languageProgress = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage],

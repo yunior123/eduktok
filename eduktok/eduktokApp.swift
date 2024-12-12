@@ -31,6 +31,8 @@ import GoogleSignInSwift
 //TODO: Solve -[SFSpeechRecognitionTask localSpeechRecognitionClient:speechRecordingDidFail:]_block_invoke Ignoring subsequent local speech recording error: Error Domain=kAFAssistantErrorDomain Code=1101 "(null)"
 //Received an error while accessing com.apple.speech.localspeechrecognition service: Error Domain=kAFAssistantErrorDomain Code=1101 "(null)"
 // TODO: check if audio session active on disappear
+
+
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -49,12 +51,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct eduktokApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+   // @StateObject private var storeManager = StoreManager()
     var body: some Scene {
         WindowGroup {
             AuthView()
                 .onOpenURL { url in
                     GIDSignIn.sharedInstance.handle(url)
                 }
+                //.environmentObject(storeManager)
+       
         }
         
     }

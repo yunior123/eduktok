@@ -12,34 +12,32 @@ import Firebase
 
 struct LanguageView: View {
     @State private var selectedLanguage = "English"
-    let languages = ["English"
-//                     ,"German", "French", "Spanish"
-    ]
+    let languages = ["English","German", "French", "Spanish"]
     let userModel: UserModel
     @StateObject private var viewModel = LanguageViewModel()
     
     var body: some View {
         NavigationStack {
             VStack {
-//                Picker("Language", selection: $selectedLanguage) {
-//                    ForEach(languages, id: \.self) { language in
-//                        Text(language).tag(language)
-//                    }
-//                }
-//                .onChange(of: selectedLanguage) { old, newLanguage in
-//                    userModel.learningLanguage = newLanguage
-//                    let db = Db()
-//                    Task {
-//                        try await db.updateUser(user: userModel)
-//   
-//                        viewModel.fetchUnits(language: selectedLanguage)
-//                    }
-//                }
-//                .pickerStyle(.segmented)
-//                .padding()
+                Picker("Language", selection: $selectedLanguage) {
+                    ForEach(languages, id: \.self) { language in
+                        Text(language).tag(language)
+                    }
+                }
+                .onChange(of: selectedLanguage) { old, newLanguage in
+                    userModel.learningLanguage = newLanguage
+                    let db = Db()
+                    Task {
+                        try await db.updateUser(user: userModel)
+                        
+                        viewModel.fetchUnits(language: selectedLanguage)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
                 
                 CardGridView(unitProgress: calculateUnitProgress(for: selectedLanguage), units: $viewModel.units.wrappedValue, userModel: userModel, selectedLanguage: selectedLanguage)
-                   
+                
             }
             .onAppear{
                 selectedLanguage = userModel.learningLanguage ?? "English"
@@ -48,7 +46,9 @@ struct LanguageView: View {
                 }
             }
             .padding(.top, 0)
+            
         }
+        
         
     }
     
@@ -95,7 +95,7 @@ struct UnitCardView: View {
     let progress: Int
     let userModel: UserModel
     @State private var showDeleteAlert = false // State to control the alert
-
+    
     func deleteUnitData(unit: UnitModel) {
         // 1. Firestore Deletion
         let db = Firestore.firestore() // Get Firestore instance
@@ -106,11 +106,11 @@ struct UnitCardView: View {
                 print("Firestore document deleted successfully")
             }
         }
-
+        
         // 2. Storage Deletion
         let storageRef = Storage.storage().reference()
         let imageRef = storageRef.child("images/unit_\(unit.unitNumber)_\(unit.language.lowercased()).jpg")
-
+        
         imageRef.delete { error in
             if let error = error {
                 print("Error deleting Storage image: \(error)")
@@ -119,7 +119,7 @@ struct UnitCardView: View {
             }
         }
     }
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(unit.unitName)
@@ -128,15 +128,15 @@ struct UnitCardView: View {
             Text(unit.title)
                 .lineLimit(2)
                 .foregroundColor(.blue)
-
+            
             CachedAsyncImage(url: unit.imageUrl, placeholder: Image(systemName: "photo"))
                 .frame(maxHeight: 150) // Constrain image height
                 .clipped()
-
+            
             Text("Progress: \(progress)/\(unit.lessons.count)")
                 .foregroundColor(.blue)
                 .font(.caption).bold()
-
+            
             if userModel.role == "admin" {
                 Button("Delete Unit") {
                     showDeleteAlert = true // Show the confirmation alert

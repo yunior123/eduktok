@@ -27,6 +27,7 @@ struct AuthView: View {
                     .environmentObject(authViewModel)
             }
         }
+ 
     }
 }
 

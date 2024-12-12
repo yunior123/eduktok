@@ -32,10 +32,12 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .onAppear {
-            Task{
+            Task {
                 viewModel.fetchUser()
             }
         }
+    
+        
     }
 }
 
@@ -64,7 +66,6 @@ struct SignOutButton: View {
     // 1. Delete user data from Firestore (Db class)
     let db = Db()
     try await db.deleteUser(id: userId)
-    try await db.deleteTemplates(userId: userId)
     
     // 2. Delete profile image from Storage (if exists)
     let storageRef = Storage.storage().reference()
