@@ -21,14 +21,13 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State var isLoading: Bool = true
     @State private var isPro = false
-
-        
+    
     var body: some View {
         VStack {
             Spacer()
             if let userModel = $viewModel.userModel.wrappedValue {
                 TabView {
-                    LanguageView(userModel: userModel)
+                    LanguageView(userModel: userModel, isPro: (isPro || userModel.hasLifetimeAccess))
                         .tabItem {
                             Label("Languages", systemImage: "globe")
                         }
@@ -52,15 +51,19 @@ struct HomeView: View {
                                 .id(2)
                         }
                     }
-                    StoreKitProViewMP()
-                        .tabItem {
-                            Label("Store", systemImage: "checklist")
-                        }
-                        .tag(3)
-                        .id(3)
+                    if (!(isPro || userModel.hasLifetimeAccess))
+                    {
+                        StoreKitProViewMP(userDocId: userModel.id)
+                            .tabItem {
+                                Label("Store", systemImage: "crown.fill")
+                            }
+                            .tag(3)
+                            .id(3)
+                        
+                    }
                     SettingsView().tabItem {
                         Label("Settings", systemImage: "gear")
-                    }.tag(6).id(6)
+                    }.tag(4).id(4)
                 }
             }
         }
@@ -78,16 +81,17 @@ struct HomeView: View {
         .currentEntitlementTask(for: Products.lifetime) { taskState in
             print("currentEntitlementTask called")
             logger.info("Checking non renewable subscription status")
-            
             if let verification = taskState.transaction,
-                    let transaction = try? verification.payloadValue {
+               let transaction = try? verification.payloadValue {
                 print("Transaction: \(transaction)")
-                     isPro = transaction.revocationDate == nil
-                 } else {
-                     isPro = false
-                 }
+                print(
+                    "AppAccountToken: \(String(describing: transaction.appAccountToken))"
+                )
+                isPro = transaction.revocationDate == nil
+            } else {
+                isPro = false
+            }
         }
-
     }
 }
 

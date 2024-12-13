@@ -99,6 +99,12 @@ class Db {
         try await unitRef.updateData(unitData)
     }
     
+    func createPurchaseRecord(_ purchaseRecord: PurchaseRecord) async throws -> String {
+        let purchaseRecordsRef = firestore.collection("purchaseRecords")
+        let documentRef = try purchaseRecordsRef.addDocument(from: purchaseRecord)
+        return documentRef.documentID
+    }
+    
 }
 
 enum DbError: Error {

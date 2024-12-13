@@ -33,16 +33,13 @@ class SettingsViewModel: ObservableObject {
         }
     }
     
-    func updateUserName(newName: String) async {
+    func updateUserName(newName: String) async throws{
         guard let user = user else {
             return
         }
-        do{
-            try await db.updateUser(user: user.copyWith(username: newName))
-        }
-        catch {
-            print("Error updating user name")
-        }
+     
+        try await db.updateUser(user: user.copyWith(username: newName))
+
     }
     
     func uploadProfilePicture(image: UIImage) async throws {

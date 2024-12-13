@@ -43,8 +43,8 @@ class HomeViewModel: ObservableObject {
                 email: email,
                 username: username,
                 avatarUrl: avatarUrl,
-                tags: [],
-                role: "user"
+                role: "user",
+                hasLifetimeAccess: false
             )
             
             let docId = try await db.createUser(userModel)

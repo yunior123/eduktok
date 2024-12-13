@@ -4,7 +4,7 @@
 //
 //  Created by Yunior Rodriguez Osorio on 14/3/24.
 //
-//No image named 'logo' found in asset catalog for /private/var/folders/bc/650vj62175vcn92kgbffvhzw0000gp/X/4A7538D6-ECAE-52E6-88F6-55D9E90779A3/d/Wrapper/eduktok.app
+
 import SwiftUI
 import FirebaseStorage
 import FirebaseFirestore
@@ -15,6 +15,7 @@ struct LanguageView: View {
     let languages = ["English","German", "French", "Spanish"]
     let userModel: UserModel
     @StateObject private var viewModel = LanguageViewModel()
+    let isPro: Bool
     
     var body: some View {
         NavigationStack {
@@ -35,8 +36,13 @@ struct LanguageView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding()
-                
-                CardGridView(unitProgress: calculateUnitProgress(for: selectedLanguage), units: $viewModel.units.wrappedValue, userModel: userModel, selectedLanguage: selectedLanguage)
+                CardGridView(
+                    unitProgress: calculateUnitProgress(for: selectedLanguage),
+                    units: $viewModel.units.wrappedValue.sorted { $0.unitNumber < $1.unitNumber },
+                    userModel: userModel,
+                    selectedLanguage: selectedLanguage,
+                    isPro: isPro
+                )
                 
             }
             .onAppear{
@@ -70,22 +76,51 @@ struct CardGridView: View {
     let units: [UnitModel]
     let userModel: UserModel
     let selectedLanguage: String
+    let isPro: Bool
     let gridLayout = [
         GridItem(.adaptive(minimum: 150, maximum: 250), spacing: 10),
         GridItem(.adaptive(minimum: 150, maximum: 250), spacing: 10),
     ]
+    
     var body: some View {
         ScrollView {
-            LazyVGrid(
-                columns: gridLayout, spacing: 15) {
-                    ForEach(units.sorted(by: { $0.unitNumber < $1.unitNumber })) { unit in
-                        NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
+            LazyVGrid(columns: gridLayout, spacing: 15) {
+                ForEach(
+                    units,
+                    id: \.id
+                ) { unit in
+                    ZStack {
+                        // If the user does not have lifetime access, they only get half the units.
+                        // Determine if the card should be interactive
+                        if isPro || (unit.unitNumber - 1) < units.count / 2 {
+                            NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
+                                UnitCardView(unit: unit, progress: unitProgress[unit.id!] ?? 0, userModel: userModel)
+                            }
+                            .disabled(unit.lessons.isEmpty)
+                        } else {
                             UnitCardView(unit: unit, progress: unitProgress[unit.id!] ?? 0, userModel: userModel)
+                                .overlay(
+                                    Color.black.opacity(0.5)
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            VStack {
+                                                Image(systemName: "crown.fill")
+                                                    .foregroundColor(.yellow)
+                                                    .font(.title)
+                                                Text("Unlock with premium")
+                                                    .foregroundColor(.white)
+                                                    .font(.headline)
+                                                    .padding()
+                                            }
+                                                .padding()
+                                            
+                                        )
+                                )
                         }
-                        .disabled(unit.lessons.isEmpty)
                     }
                 }
-                .padding(.top, 0)
+            }
+            .padding(.top, 0)
         }
     }
 }
