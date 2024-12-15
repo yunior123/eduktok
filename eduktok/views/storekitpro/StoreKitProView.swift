@@ -114,22 +114,23 @@ class StoreManager: ObservableObject {
                     .appAccountToken(appAccountToken)
                 ])
 
-                let transactionRecord = PurchaseRecord(
-                    userDocId: userDocId,
-                    appAccountToken: appAccountToken,
-                    productId: product.id,
-                    date: Date()
-                )
 
                 switch purchaseResult {
                 case .success(let verification):
                     switch verification {
                     case .verified(let transaction):
                         print("Purchase successful and verified!")
-
+                        let transactionRecord = PurchaseRecord(
+                            userDocId: userDocId,
+                            appAccountToken: appAccountToken,
+                            productId: product.id,
+                            date: Date(),
+                            transactionId: String(transaction.id)
+                        )
                         // Save the purchase record to Firestore
                         do {
                             let db = Db()
+                            print(transactionRecord)
                             let recordID = try await db.createPurchaseRecord(
                                 transactionRecord)
                             print("Purchase record saved with ID: \(recordID)")

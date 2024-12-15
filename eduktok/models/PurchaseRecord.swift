@@ -14,4 +14,5 @@ struct PurchaseRecord: Codable {
     let appAccountToken: UUID
     let productId: String
     let date: Date
+    let transactionId: String
 }
