@@ -13,26 +13,28 @@ struct ForgotPasswordView: View {
     @State private var email: String = ""
 
     var body: some View {
-        VStack {
-            Image("logo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: 200)
-            TextField("Email", text: $email)
-                .onAppear {
-                    email = authViewModel.email // Pre-populate from the view model
+        ScrollView {
+            VStack {
+                Image("logo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 200)
+                TextField("Email", text: $email)
+                    .onAppear {
+                        email = authViewModel.email // Pre-populate from the view model
+                    }
+
+                Button("Reset Password") {
+                    authViewModel.resetPassword(email: email)
                 }
 
-            Button("Reset Password") {
-                authViewModel.resetPassword()
+                 if let fpErrorMessage = authViewModel.fpErrorMessage {
+                     Text(fpErrorMessage)
+                         .foregroundColor(.red)
+                 }
             }
-
-             if let fpErrorMessage = authViewModel.fpErrorMessage {
-                 Text(fpErrorMessage)
-                     .foregroundColor(.red)
-             }
+            .padding()
         }
-        .padding()
     }
 }
 

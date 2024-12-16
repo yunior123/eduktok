@@ -13,22 +13,24 @@ struct VerifyEmailView: View {
     @State private var isVerificationEmailSent = false
 
     var body: some View {
-        VStack {
-            Text("Please check your email and click the verification link.")
-                .padding()
+        NavigationStack {
+            VStack {
+                Text("Please check your email and click the verification link.")
+                    .padding()
 
-            if !isVerificationEmailSent {
-                Button("Resend Verification Email") {
-                    authViewModel.sendVerificationEmail()
-                    isVerificationEmailSent = true // Update state
+                if !isVerificationEmailSent {
+                    Button("Resend Verification Email") {
+                        authViewModel.sendVerificationEmail()
+                        isVerificationEmailSent = true // Update state
+                    }
+                } else {
+                    Text("Verification email sent")
                 }
-            } else {
-                Text("Verification email sent")
+                NavigationLink("Back to Sign Up", destination: SignUpView())
+                           .padding()
             }
-            NavigationLink("Back to Sign Up", destination: SignUpView())
-                       .padding() 
+            .padding()
         }
-        .padding()
     }
 }
 

@@ -17,7 +17,7 @@ struct SettingsView: View {
     @State private var showSignOutConfirmation = false
     
     var body: some View {
-        NavigationView {
+        NavigationStack   {
             ZStack {
                 Color(.systemGroupedBackground)
                     .edgesIgnoringSafeArea(.all)

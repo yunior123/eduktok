@@ -29,7 +29,7 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    func resetPassword() {
+    func resetPassword(email:String) {
         if !email.isEmpty {
             Auth.auth().sendPasswordReset(withEmail: email) { error in
                 if let error = error {

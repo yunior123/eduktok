@@ -30,9 +30,9 @@ struct SignUpView: View {
     @State private var confirmPassword = "" // For confirm password field
     
     var body: some View {
-        VStack {
-            NavigationStack {
-                ScrollView{
+        NavigationStack {
+            ScrollView  {
+                VStack {
                     Image("logo")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -93,7 +93,7 @@ struct SignUpView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 20, height: 20) // Adjust sizing as needed
-
+                            
                             Text(authMode == .signIn ? "Sign In with Google" : "Sign Up with Google")
                                 .font(.system(.body, design: .default).weight(.semibold))
                         }
@@ -103,8 +103,8 @@ struct SignUpView: View {
                     .foregroundColor(.black)  // Black foreground text
                     .clipShape(RoundedRectangle(cornerRadius: 5)) // Slightly rounded corners
                     .overlay( // Add a subtle border
-                       RoundedRectangle(cornerRadius: 5)
-                           .stroke(.gray.opacity(0.5), lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(.gray.opacity(0.5), lineWidth: 0.5)
                     )
                     
                     HStack {
@@ -114,10 +114,12 @@ struct SignUpView: View {
                         }
                     }
                 }
+                
+                
             }
-           
+            .padding()
         }
-        .padding()
+        
     }
     
 }
