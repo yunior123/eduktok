@@ -15,4 +15,5 @@ struct PurchaseRecord: Codable {
     let productId: String
     let date: Date
     let transactionId: String
+    let environment: String
 }

@@ -120,12 +120,15 @@ class StoreManager: ObservableObject {
                     switch verification {
                     case .verified(let transaction):
                         print("Purchase successful and verified!")
+                        #warning("TODO: change environment to production when ready")
+                   
                         let transactionRecord = PurchaseRecord(
                             userDocId: userDocId,
                             appAccountToken: appAccountToken,
                             productId: product.id,
                             date: Date(),
-                            transactionId: String(transaction.id)
+                            transactionId: String(transaction.id),
+                            environment: "sandbox"
                         )
                         // Save the purchase record to Firestore
                         do {
