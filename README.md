@@ -1,6 +1,11 @@
 # Eduktok
 
 Eduktok is a mobile app designed to make language learning interactive and engaging. Built with Swift, it offers users an intuitive platform to master new languages through a variety of fun and educational features.
+You can also download it from the hashtag#AppStore here: 
+
+https://lnkd.in/eQCHw6Q3
+
+Only available countries: Canada and USA for the moment.
 
 ## Features
 - Interactive lessons
