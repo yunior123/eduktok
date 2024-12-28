@@ -20,10 +20,6 @@ struct ForgotPasswordView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 200)
                 TextField("Email", text: $email)
-                    .onAppear {
-                        email = authViewModel.email // Pre-populate from the view model
-                    }
-
                 Button("Reset Password") {
                     authViewModel.resetPassword(email: email)
                 }
@@ -34,6 +30,9 @@ struct ForgotPasswordView: View {
                  }
             }
             .padding()
+        }
+        .onAppear {
+            email = authViewModel.email // Pre-populate from the view model
         }
     }
 }

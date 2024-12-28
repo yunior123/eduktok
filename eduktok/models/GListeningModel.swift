@@ -20,13 +20,16 @@ struct GListeningModel: Identifiable, LessonModel {
     var type: GLanguageSkill
     var backModels: [ListeningModel]
     var foreModels: [ListeningModel]
+    var audioUrlDict: [String: [String: String]]
     
-    init(id: String, lessonNumber: Int, type: GLanguageSkill, backModels: [ListeningModel], foreModels: [ListeningModel]) {
+    init(id: String, lessonNumber: Int, type: GLanguageSkill, backModels: [ListeningModel], foreModels: [ListeningModel], audioUrlDict: [String: [String: String]] = [:]
+    ) {
         self.id = id
         self.type = type
         self.backModels = backModels
         self.foreModels = foreModels
         self.lessonNumber = lessonNumber
+        self.audioUrlDict = audioUrlDict
     }
     
     init?(from lessonDict: [String: Any]) {
@@ -43,15 +46,19 @@ struct GListeningModel: Identifiable, LessonModel {
         guard let foreModelsData = lessonDict["foreModels"] as? [[String: Any]] else { return nil }
         let foreModels = foreModelsData.compactMap { ListeningModel(from: $0) }
         
+        let audioUrlDictData = lessonDict["audioUrlDict"] as? [String: [String: String]]
+        
         self.id = id
         self.type = type
+        self.audioUrlDict = audioUrlDictData!
         self.backModels = backModels
         self.foreModels = foreModels
         self.lessonNumber = lessonNumber
+        
     }
     
     enum CodingKeys: CodingKey {
-        case id, type, backModels, foreModels, lessonNumber
+        case id, type, backModels, foreModels, lessonNumber, audioUrlDict
     }
     
     init(from decoder: Decoder) throws {
@@ -61,8 +68,13 @@ struct GListeningModel: Identifiable, LessonModel {
         type = try container.decode(GLanguageSkill.self, forKey: .type)
         backModels = try container.decode([ListeningModel].self, forKey: .backModels)
         foreModels = try container.decode([ListeningModel].self, forKey: .foreModels)
+        audioUrlDict = try container
+            .decodeIfPresent(
+                [String: [String: String]].self,
+                forKey: .audioUrlDict
+            )!
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -70,6 +82,7 @@ struct GListeningModel: Identifiable, LessonModel {
         try container.encode(type, forKey: .type)
         try container.encode(backModels, forKey: .backModels)
         try container.encode(foreModels, forKey: .foreModels)
+        try container.encodeIfPresent(audioUrlDict, forKey: .audioUrlDict)
     }
     
 }

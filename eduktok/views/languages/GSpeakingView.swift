@@ -23,9 +23,8 @@ extension AVAudioSession {
 struct GSpeakingView: View {
     let model: GSpeakingModel
     let onFinished: () -> Void
-    /// English, German, French, Spanish
     let languageCode: String
-    
+    let audioUrlDict: [String: [String:String]]
     @StateObject private var viewModel = GSpeakingViewModel()
     @State private var activeCardIndex: Int = 0
     
@@ -40,9 +39,7 @@ struct GSpeakingView: View {
             ScrollView {
                 LazyVGrid(columns: gridLayout, spacing: 10) {
                     ForEach(viewModel.models.indices, id: \.self) { index in
-                        let components = languageCode.components(separatedBy: "-")
-                        let primaryLanguageCode = components.first!
-                        let language = Locale(identifier: primaryLanguageCode)
+                        let language = Locale(identifier: languageCode)
                         SCardView(
                             model: viewModel.models[index],
                             language: language,
@@ -59,6 +56,8 @@ struct GSpeakingView: View {
         .onAppear {
             viewModel.models = model.models
             viewModel.onFinished = onFinished
+            viewModel.languageCode = languageCode
+            viewModel.audioUrlDict = audioUrlDict
             activeCardIndex = 0 // Activate the microphone for the first card
             DispatchQueue.global(qos: .background).async {
                 do {
@@ -121,7 +120,7 @@ struct SCardView: View {
         VStack {
             VStack {
                 HStack {
-                    Text(model.text)
+                    Text(model.textDict[viewModel.languageCode!]!)
                         .font(.headline)
                         .foregroundColor(.black)
                     Spacer()
@@ -173,7 +172,12 @@ struct SCardView: View {
         .shadow(radius: 3)
         .opacity(model.completed ? 0.8 : 1.0)
         .onAppear {
-            guard let url = model.audioUrl else { return }
+            let langCode = viewModel.languageCode!
+            let text = model.textDict[langCode]!;
+            let audioDict = viewModel.audioUrlDict!
+            var urlString = audioDict[langCode]![text]!
+
+            guard let url = URL(string:urlString)  else { return }
             
             URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if let error = error {
@@ -185,7 +189,7 @@ struct SCardView: View {
                     return
                 }
                 
-                print("Audio data length: \(data.count) bytes")
+                //print("Audio data length: \(data.count) bytes")
                 
                 do {
                     player = try AVAudioPlayer(data: data)
@@ -198,21 +202,21 @@ struct SCardView: View {
             
             loadAudioFile(filename: "success", player: &successPlayer)
             if successPlayer != nil {
-                print("successPlayer loaded successfully.")
+                //print("successPlayer loaded successfully.")
             } else {
                 print("Failed to load successPlayer.")
             }
             
             loadAudioFile(filename: "error", player: &errorPlayer)
             if errorPlayer != nil {
-                print("errorPlayer loaded successfully.")
+                //print("errorPlayer loaded successfully.")
             } else {
                 print("Failed to load errorPlayer.")
             }
             
             loadAudioFile(filename: "mic-active", player: &micActivePlayer)
             if micActivePlayer != nil {
-                print("micActivePlayer loaded successfully.")
+                //print("micActivePlayer loaded successfully.")
             } else {
                 print("Failed to load micActivePlayer.")
             }
@@ -308,7 +312,9 @@ struct SCardView: View {
     
     func validateSpeech() async {
         let transcript = speechRecognizer.transcription
-        let trimmedText = trimmed(model.text.lowercased()).trimmingCharacters(in: .punctuationCharacters)
+        let langCode = viewModel.languageCode!
+        let text = model.textDict[langCode]!;
+        let trimmedText = trimmed(text.lowercased()).trimmingCharacters(in: .punctuationCharacters)
         let trimmedTranscript = trimmed(transcript.lowercased()).trimmingCharacters(in: .punctuationCharacters)
         let match = areStringsSimilar(trimmedText, trimmedTranscript)
         

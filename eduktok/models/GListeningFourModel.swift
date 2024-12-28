@@ -8,6 +8,7 @@
 import Foundation
 
 struct GListeningFourModel: Identifiable, LessonModel {
+    var audioUrlDict: [String : [String : String]]
 
     static func == (lhs: GListeningFourModel, rhs: GListeningFourModel) -> Bool {
         return lhs.id == rhs.id
@@ -20,11 +21,12 @@ struct GListeningFourModel: Identifiable, LessonModel {
     var type: GLanguageSkill
     var foreModels: [ListeningModel]
     
-    init(id: String, lessonNumber: Int, type: GLanguageSkill, foreModels: [ListeningModel]) {
+    init(id: String, lessonNumber: Int, type: GLanguageSkill, foreModels: [ListeningModel], audioUrlDict: [String: [String: String]]? = nil) {
         self.id = id
         self.type = type
         self.foreModels = foreModels
         self.lessonNumber = lessonNumber
+        self.audioUrlDict = audioUrlDict!
     }
     
     init?(from lessonDict: [String: Any]) {
@@ -41,10 +43,11 @@ struct GListeningFourModel: Identifiable, LessonModel {
         self.type = type
         self.foreModels = foreModels
         self.lessonNumber = lessonNumber
+        self.audioUrlDict = lessonDict["audioUrlDict"] as! [String: [String: String]]
     }
     
     enum CodingKeys: CodingKey {
-        case id, type, foreModels, lessonNumber
+        case id, type, foreModels, lessonNumber, audioUrlDict
     }
     
     init(from decoder: Decoder) throws {
@@ -53,6 +56,11 @@ struct GListeningFourModel: Identifiable, LessonModel {
         lessonNumber = try container.decode(Int.self, forKey: .lessonNumber)
         type = try container.decode(GLanguageSkill.self, forKey: .type)
         foreModels = try container.decode([ListeningModel].self, forKey: .foreModels)
+        audioUrlDict = try container
+            .decodeIfPresent(
+                [String: [String: String]].self,
+                forKey: .audioUrlDict
+            )!
     }
     
     func encode(to encoder: Encoder) throws {
@@ -61,6 +69,6 @@ struct GListeningFourModel: Identifiable, LessonModel {
         try container.encode(lessonNumber, forKey: .lessonNumber)
         try container.encode(type, forKey: .type)
         try container.encode(foreModels, forKey: .foreModels)
+        try container.encodeIfPresent(audioUrlDict, forKey: .audioUrlDict)
     }
-    
 }

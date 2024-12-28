@@ -14,8 +14,8 @@ class LanguageViewModel: ObservableObject {
     @Published var units: [UnitModel] = []
     private var unitsListener: ListenerRegistration?
     
-    func fetchUnits(language: String) {
-        unitsListener = db.unitsListener(language: language).addSnapshotListener { [weak self] snapshot, error in
+    func fetchUnits() {
+        unitsListener = db.unitsListener().addSnapshotListener { [weak self] snapshot, error in
             if let error = error {
                 print("Failed to listen for changes: \(error)")
                 return
@@ -29,7 +29,6 @@ class LanguageViewModel: ObservableObject {
                     return nil
                 }
                 return unitModel
-                
             }
             
             self?.units = docs

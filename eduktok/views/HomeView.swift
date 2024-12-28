@@ -34,36 +34,19 @@ struct HomeView: View {
                         .tag(0)
                         .id(0)
                     
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        if userModel.role == "admin" {
-                            // Show admin-specific controls
-                            UnitCreationView()
-                                .tabItem {
-                                    Label("Unit Creation", systemImage: "square.and.pencil")
-                                }
-                                .tag(1)
-                                .id(1)
-                            LessonCreationView()
-                                .tabItem {
-                                    Label("Lesson Creation", systemImage: "book")
-                                }
-                                .tag(2)
-                                .id(2)
-                        }
-                    }
                     if (!(isPro || userModel.hasLifetimeAccess))
                     {
                         StoreKitProViewMP(userDocId: userModel.id)
                             .tabItem {
                                 Label("Store", systemImage: "crown.fill")
                             }
-                            .tag(3)
-                            .id(3)
+                            .tag(1)
+                            .id(1)
                         
                     }
                     SettingsView().tabItem {
                         Label("Settings", systemImage: "gear")
-                    }.tag(4).id(4)
+                    }.tag(2).id(2)
                 }
             }
         }
@@ -79,8 +62,8 @@ struct HomeView: View {
             print(product)
         }
         .currentEntitlementTask(for: Products.lifetime) { taskState in
-            print("currentEntitlementTask called")
-            logger.info("Checking non renewable subscription status")
+            //print("currentEntitlementTask called")
+            //logger.info("Checking non renewable subscription status")
             if let verification = taskState.transaction,
                let transaction = try? verification.payloadValue {
                 print("Transaction: \(transaction)")
@@ -126,3 +109,5 @@ func requestPermissions() async{
 #Preview {
     HomeView()
 }
+
+

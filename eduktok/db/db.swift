@@ -54,9 +54,8 @@ class Db {
         try await fsTaskUpdateOneDocWithId(collection: "users", docId: user.id, model: model)
     }
     
-    func unitsListener(language: String ) -> Query {
-        return firestore.collection("units")
-            .whereField("language", isEqualTo: language)
+    func unitsListener() -> Query {
+        return firestore.collection("unitsNew")
     }
     
     func userListener(email: String) -> Query {
@@ -65,39 +64,39 @@ class Db {
             .limit(to: 1)
     }
     
-    func removeLessonFromUnit(unitId: String, lessonId: String, unit: UnitModel, lessonNumber: Int) async throws {
-        let unitRef = firestore.collection("units").document(unitId)
-        
-        // Get the current unit data
-        let documentSnapshot = try await unitRef.getDocument()
-        guard documentSnapshot.exists else {
-            throw DbError.unitNotFound(unitId: unitId) // Create a custom error type
-        }
-        guard var unitData = documentSnapshot.data() else {
-            throw DbError.invalidUnitData(unitId: unitId)
-        }
-        
-        // Access and modify the lessons
-        guard var lessons = unitData["lessons"] as? [[String: Any]] else {
-            throw DbError.invalidUnitLessons(unitId: unitId)
-        }
-        
-        // Remove the lesson with the matching ID
-        lessons.removeAll { lesson in
-            // TODO remove image url
-            let imagePath = createImageFilePath(unit: unit, lessonNumber: lessonNumber, id: lesson["id"] as! String)
-            let audioPath = createAudioPath(unit: unit, lessonNumber: lessonNumber, id: lesson["id"] as! String)
-            Task {
-                try? await deleteImageFromFirebase(path: imagePath)
-                try? await deleteAudioFromFirebase(path: audioPath)
-            }
-            return lesson["id"] as? String == lessonId
-        }
-
-        // Update the unit document with the modified lessons array
-        unitData["lessons"] = lessons
-        try await unitRef.updateData(unitData)
-    }
+//    func removeLessonFromUnit(unitId: String, lessonId: String, unit: UnitModel, lessonNumber: Int) async throws {
+//        let unitRef = firestore.collection("units").document(unitId)
+//        
+//        // Get the current unit data
+//        let documentSnapshot = try await unitRef.getDocument()
+//        guard documentSnapshot.exists else {
+//            throw DbError.unitNotFound(unitId: unitId) // Create a custom error type
+//        }
+//        guard var unitData = documentSnapshot.data() else {
+//            throw DbError.invalidUnitData(unitId: unitId)
+//        }
+//        
+//        // Access and modify the lessons
+//        guard var lessons = unitData["lessons"] as? [[String: Any]] else {
+//            throw DbError.invalidUnitLessons(unitId: unitId)
+//        }
+//        
+//        // Remove the lesson with the matching ID
+//        lessons.removeAll { lesson in
+//            // TODO remove image url
+//            let imagePath = createImageFilePath(unit: unit, lessonNumber: lessonNumber, id: lesson["id"] as! String)
+//            let audioPath = createAudioPath(unit: unit, lessonNumber: lessonNumber, id: lesson["id"] as! String)
+//            Task {
+//                try? await deleteImageFromFirebase(path: imagePath)
+//                try? await deleteAudioFromFirebase(path: audioPath)
+//            }
+//            return lesson["id"] as? String == lessonId
+//        }
+//
+//        // Update the unit document with the modified lessons array
+//        unitData["lessons"] = lessons
+//        try await unitRef.updateData(unitData)
+//    }
     
     func createPurchaseRecord(_ purchaseRecord: PurchaseRecord) async throws -> String {
         let purchaseRecordsRef = firestore.collection("purchaseRecords")

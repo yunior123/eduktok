@@ -10,6 +10,8 @@ import SwiftUI
 class GSpeakingViewModel: ObservableObject {
     @Published var models: [SpeakingModel] = []
     var onFinished: () -> Void = {}
+    @Published var languageCode: String?
+    @Published var audioUrlDict: [String: [String:String]]?
     
     func markCardCompleted(id: String) {
         if let index = models.firstIndex(where: { $0.id == id }) {

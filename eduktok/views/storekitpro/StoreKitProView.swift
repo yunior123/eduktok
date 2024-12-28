@@ -182,3 +182,8 @@ class StoreManager: ObservableObject {
 #Preview {
     StoreKitProViewMP(userDocId: "userDocId")
 }
+
+#warning("implement this")
+//func restorePurchases() {
+//    SKPaymentQueue.default().restoreCompletedTransactions()
+//}

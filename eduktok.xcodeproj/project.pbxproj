@@ -456,7 +456,6 @@
 				52FB1F222B82A519001AB526 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5277DD1F2B8DA7680005039A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				5283360F2B96D48F000F39B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
-				526BBE7D2BBE5BD5001CD63E /* XCRemoteSwiftPackageReference "OpenAI" */,
 				5287878F2C22AFE900DD957D /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 52FB1EF12B8296DC001AB526 /* Products */;
@@ -707,7 +706,7 @@
 				CODE_SIGN_ENTITLEMENTS = eduktok/eduktok.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 61;
 				DEVELOPMENT_ASSET_PATHS = "\"eduktok/Preview Content\"";
 				DEVELOPMENT_TEAM = 98KN6NA6DU;
 				ENABLE_PREVIEWS = YES;
@@ -728,7 +727,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = ca.eduktok.eduktok;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -746,7 +745,7 @@
 				CODE_SIGN_ENTITLEMENTS = eduktok/eduktok.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 61;
 				DEVELOPMENT_ASSET_PATHS = "\"eduktok/Preview Content\"";
 				DEVELOPMENT_TEAM = 98KN6NA6DU;
 				ENABLE_PREVIEWS = YES;
@@ -767,7 +766,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = ca.eduktok.eduktok;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -895,14 +894,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		526BBE7D2BBE5BD5001CD63E /* XCRemoteSwiftPackageReference "OpenAI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/MacPaw/OpenAI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.7;
-			};
-		};
 		5277DD1F2B8DA7680005039A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";

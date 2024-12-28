@@ -12,7 +12,7 @@ import Firebase
 
 struct LanguageView: View {
     @State private var selectedLanguage = "English"
-    let languages = ["English","German", "French", "Spanish"]
+    let languages = ["English","German", "French", "Spanish","Italian","Chinese","Portuguese","Russian","Japanese","Korean"]
     let userModel: UserModel
     @StateObject private var viewModel = LanguageViewModel()
     let isPro: Bool
@@ -20,22 +20,25 @@ struct LanguageView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Picker("Language", selection: $selectedLanguage) {
-                    ForEach(languages, id: \.self) { language in
-                        Text(language).tag(language)
+                ScrollView(.horizontal) {
+                    HStack(spacing: 12) {
+                        ForEach(languages, id: \.self) { language in
+                            LanguageButton(
+                                language: language,
+                                isSelected: language == selectedLanguage,
+                                action: {
+                                    selectedLanguage = language
+                                    userModel.learningLanguage = language
+                                    let db = Db()
+                                    Task {
+                                        try await db.updateUser(user: userModel)
+                                    }
+                                }
+                            )
+                        }
                     }
+                    .padding(.horizontal, 16)
                 }
-                .onChange(of: selectedLanguage) { old, newLanguage in
-                    userModel.learningLanguage = newLanguage
-                    let db = Db()
-                    Task {
-                        try await db.updateUser(user: userModel)
-                        
-                        viewModel.fetchUnits(language: selectedLanguage)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding()
                 CardGridView(
                     unitProgress: calculateUnitProgress(for: selectedLanguage),
                     units: $viewModel.units.wrappedValue.sorted { $0.unitNumber < $1.unitNumber },
@@ -48,14 +51,11 @@ struct LanguageView: View {
             .onAppear{
                 selectedLanguage = userModel.learningLanguage ?? "English"
                 Task{
-                    viewModel.fetchUnits(language: selectedLanguage)
+                    viewModel.fetchUnits()
                 }
             }
             .padding(.top, 0)
-            
         }
-        
-        
     }
     
     private func calculateUnitProgress(for language: String) -> [String: Int] {
@@ -67,6 +67,26 @@ struct LanguageView: View {
             unitProgress[unitName] = completedLessons
         }
         return unitProgress
+    }
+}
+
+struct LanguageButton: View {
+    let language: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(language)
+                .font(.system(size: 16, weight: isSelected ? .bold : .regular))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(isSelected ? Color.blue : Color.gray.opacity(0.5))
+                )
+                .foregroundColor(isSelected ? .white : .primary)
+        }
     }
 }
 
@@ -94,28 +114,38 @@ struct CardGridView: View {
                         // Determine if the card should be interactive
                         if isPro || (unit.unitNumber - 1) < units.count / 2 {
                             NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
-                                UnitCardView(unit: unit, progress: unitProgress[unit.id!] ?? 0, userModel: userModel)
+                                UnitCardView(
+                                    unit: unit,
+                                    progress: unitProgress[unit.id!] ?? 0,
+                                    userModel: userModel,
+                                    selectedLanguage: selectedLanguage
+                                )
                             }
                             .disabled(unit.lessons.isEmpty)
                         } else {
-                            UnitCardView(unit: unit, progress: unitProgress[unit.id!] ?? 0, userModel: userModel)
-                                .overlay(
-                                    Color.black.opacity(0.5)
-                                        .cornerRadius(10)
-                                        .overlay(
-                                            VStack {
-                                                Image(systemName: "crown.fill")
-                                                    .foregroundColor(.yellow)
-                                                    .font(.title)
-                                                Text("Unlock with premium")
-                                                    .foregroundColor(.white)
-                                                    .font(.headline)
-                                                    .padding()
-                                            }
+                            UnitCardView(
+                                unit: unit,
+                                progress: unitProgress[unit.id!] ?? 0,
+                                userModel: userModel,
+                                selectedLanguage: selectedLanguage
+                            )
+                            .overlay(
+                                Color.black.opacity(0.5)
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        VStack {
+                                            Image(systemName: "crown.fill")
+                                                .foregroundColor(.yellow)
+                                                .font(.title)
+                                            Text("Unlock with premium")
+                                                .foregroundColor(.white)
+                                                .font(.headline)
                                                 .padding()
-                                            
-                                        )
-                                )
+                                        }
+                                            .padding()
+                                        
+                                    )
+                            )
                         }
                     }
                 }
@@ -130,29 +160,12 @@ struct UnitCardView: View {
     let progress: Int
     let userModel: UserModel
     @State private var showDeleteAlert = false // State to control the alert
+    let selectedLanguage: String
     
-    func deleteUnitData(unit: UnitModel) {
-        // 1. Firestore Deletion
-        let db = Firestore.firestore() // Get Firestore instance
-        db.collection("units").document(unit.id!).delete() { error in
-            if let error = error {
-                print("Error deleting Firestore document: \(error)")
-            } else {
-                print("Firestore document deleted successfully")
-            }
-        }
-        
-        // 2. Storage Deletion
-        let storageRef = Storage.storage().reference()
-        let imageRef = storageRef.child("images/unit_\(unit.unitNumber)_\(unit.language.lowercased()).jpg")
-        
-        imageRef.delete { error in
-            if let error = error {
-                print("Error deleting Storage image: \(error)")
-            } else {
-                print("Storage image deleted successfully")
-            }
-        }
+    func getTitle() -> String {
+        let langCode = convertToLanguageCode(selectedLanguage)!;
+        let title = unit.title[langCode]!
+        return title
     }
     
     var body: some View {
@@ -160,7 +173,7 @@ struct UnitCardView: View {
             Text(unit.unitName)
                 .font(.headline)
                 .foregroundColor(.blue)
-            Text(unit.title)
+            Text(getTitle())
                 .lineLimit(2)
                 .foregroundColor(.blue)
             
@@ -172,21 +185,6 @@ struct UnitCardView: View {
                 .foregroundColor(.blue)
                 .font(.caption).bold()
             
-            if userModel.role == "admin" {
-                Button("Delete Unit") {
-                    showDeleteAlert = true // Show the confirmation alert
-                }
-                .font(.caption).bold()
-                .foregroundColor(.red)
-                .alert("Confirm Delete", isPresented: $showDeleteAlert) {
-                    Button("Delete", role: .destructive) {
-                        deleteUnitData(unit: unit)
-                    }
-                    Button("Cancel", role: .cancel) {}
-                } message: {
-                    Text("Are you sure you want to delete all data for this unit? This action is irreversible.")
-                }
-            }
         }
         .padding()
         .frame(maxWidth: 250, maxHeight: 300) // Set max width and height
@@ -199,4 +197,3 @@ struct UnitCardView: View {
         .shadow(radius: 1)
     }
 }
-

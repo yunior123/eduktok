@@ -11,20 +11,20 @@ import FirebaseFirestore
 import Firebase
 import FirebaseStorage
 
-func createImageFilePath(unit: UnitModel, lessonNumber: Int, id: String) -> String {
-  return "images/unit_\(unit.unitNumber)_language_\(unit.language)_lesson_\(lessonNumber)_id_\(id).jpg"
-}
+//func createImageFilePath(unit: UnitModel, lessonNumber: Int, id: String) -> String {
+//  return "images/unit_\(unit.unitNumber)_lesson_\(lessonNumber)_id_\(id).jpg"
+//}
+//
+//func createAudioPath(unit: UnitModel, lessonNumber: Int, id: String) -> String {
+//  return "audios/unit_\(unit.unitNumber)_lesson_\(lessonNumber)_id_\(id).mp3"
+//}
 
-func createAudioPath(unit: UnitModel, lessonNumber: Int, id: String) -> String {
-  return "audios/unit_\(unit.unitNumber)_language_\(unit.language)_lesson_\(lessonNumber)_id_\(id).mp3"
-}
-
-func createImagePath(unitNumber: Int, selectedLanguage: Language) -> String {
-  // Use the raw value (lowercase) of the enum for consistency
-  let languageString = selectedLanguage.rawValue.lowercased()
-  // Include extension in the function for clarity
-  return "images/unit_\(unitNumber)_\(languageString).jpg"
-}
+//func createImagePath(unitNumber: Int, selectedLanguage: Language) -> String {
+//  // Use the raw value (lowercase) of the enum for consistency
+//  let languageString = selectedLanguage.rawValue.lowercased()
+//  // Include extension in the function for clarity
+//  return "images/unit_\(unitNumber)_\(languageString).jpg"
+//}
 
 
 
@@ -110,6 +110,48 @@ func fetchUnitByDocId(docId: String) async throws -> UnitModel? {
     }
 }
 
+//func getLanguageCode(selectedLanguage: String) -> String {
+//    switch selectedLanguage {
+//    case "German":
+//        return "de-DE"
+//    case "English":
+//        return "en-US"
+//    case "French":
+//        return "fr-FR"
+//    case "Spanish":
+//        return "es-ES"
+//    case "Italian":
+//        return "it-IT"
+//    case "Chinese":
+//        return "zh-CN"
+//    case "Portuguese":
+//        return "pt-PT"
+//    case "Russian":
+//        return "ru-RU"
+//    case "Japanese":
+//        return "ja-JP"
+//    case "Korean":
+//        return "ko-KR"
+//    default:
+//        return "en-US" // Default to English (US)
+//    }
+//}
+
+func convertToLanguageCode(_ language: String) -> String? {
+    let languageCodes = [
+        "English": "en",
+        "Spanish": "es",
+        "French": "fr",
+        "German": "de",
+        "Italian": "it",
+        "Chinese": "zh",
+        "Portuguese": "pt",
+        "Russian": "ru",
+        "Japanese": "ja",
+        "Korean": "ko"
+    ]
+    return languageCodes[language]
+}
 
 enum FirestoreError: Error {
     case missingDocumentId

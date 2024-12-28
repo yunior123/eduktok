@@ -19,48 +19,85 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
     let id: String?
     let unitName: String
     let unitNumber: Int
-    let title: String
+    let title: [String: String]
     let imageUrl: URL
     var lessons: [any LessonModel] = []
-    let language: String
     
-    init(id: String, unitName: String, unitNumber: Int, title: String, imageUrl: URL, lessons: [any LessonModel] = [], language: String) {
+    init(id: String, unitName: String, unitNumber: Int, title: [String: String], imageUrl: URL, lessons: [any LessonModel] = []) {
         self.id = id
         self.unitName = unitName
         self.unitNumber = unitNumber
         self.title = title
         self.imageUrl = imageUrl
         self.lessons = lessons
-        self.language = language
     }
     // Initializer from a database snapshot (Example using Firebase)
     init?(from document: DocumentSnapshot) {
-        guard let data = document.data() else { return nil }
+        // Debug Step 1: Check if we can get the document data
+        guard let data = document.data() else {
+            print("❌ Failed to get document data")
+            return nil
+        }
         
-        guard let unitName = data["unitName"] as? String else { return nil }
-        guard let unitNumber = data["unitNumber"] as? Int else { return nil }
-        guard let title = data["title"] as? String else { return nil }
-        guard let imageUrlString = data["imageUrl"] as? String,
-              let imageUrl = URL(string: imageUrlString) else { return nil }
-        guard let language = data["language"] as? String else { return nil }
+        //print("📄 Raw document data: \(data)")
         
-        guard let lessonsData = data["lessons"] as? [[String: Any]] else { return nil }
+        // Debug Step 2: Check unitNumber parsing
+        //print("🔍 Attempting to parse unitNumber. Raw value: \(String(describing: data["unitNumber"]))")
+        guard let unitNumber = data["unitNumber"] as? Int else {
+            print("❌ Failed to parse unitNumber. Type received: \(type(of: data["unitNumber"]))")
+            return nil
+        }
+        //print("✅ Successfully parsed unitNumber: \(unitNumber)")
         
+        // Debug Step 3: Check title parsing
+        //print("🔍 Attempting to parse title. Raw value: \(String(describing: data["title"]))")
+        guard let title = data["title"] as? [String: String] else {
+            print("❌ Failed to parse title. Type received: \(type(of: data["title"]))")
+            return nil
+        }
+        //print("✅ Successfully parsed title: \(title)")
+        
+        // Debug Step 4: Check imageUrl parsing
+        //print("🔍 Attempting to parse imageUrl. Raw value: \(String(describing: data["imageUrl"]))")
+        guard let imageUrlString = data["imageUrl"] as? String else {
+            print("❌ Failed to parse imageUrl string. Type received: \(type(of: data["imageUrl"]))")
+            return nil
+        }
+        guard let imageUrl = URL(string: imageUrlString) else {
+            print("❌ Failed to create URL from string: \(imageUrlString)")
+            return nil
+        }
+        //print("✅ Successfully parsed imageUrl: \(imageUrl)")
+        
+        // Debug Step 5: Check lessons parsing
+        //print("🔍 Attempting to parse lessons. Raw value: \(String(describing: data["lessons"]))")
+        let lessonsData = (data["lessons"] as? [[String: Any]]) ?? []
+        //print("✅ Using lessons data. Count: \(lessonsData.count)")
+        
+        // If we get here, all parsing succeeded - set the properties
         self.id = document.documentID
-        self.unitName = unitName
+        self.unitName = "Unit \(unitNumber)"
         self.unitNumber = unitNumber
         self.title = title
         self.imageUrl = imageUrl
-        self.language = language
         
-        self.lessons = lessonsData.compactMap { lessonDict in
-            return createLesson(from: lessonDict)
+        // Debug Step 6: Parse individual lessons
+        self.lessons = []
+        for (index, lessonDict) in lessonsData.enumerated() {
+            //print("🔍 Attempting to parse lesson \(index + 1)")
+            if let lesson = createLesson(from: lessonDict) {
+                self.lessons.append(lesson)
+                //print("✅ Successfully parsed lesson \(index + 1)")
+            } else {
+                print("⚠️ Failed to parse lesson \(index + 1). Raw data: \(lessonDict)")
+            }
         }
         
+        //print("✅ Successfully initialized unit with \(self.lessons.count) lessons")
     }
     // Initializer for Codable
     enum CodingKeys: CodingKey { // Define coding keys to match your property names
-        case id, unitName, unitNumber, title, imageUrl, lessons, language
+        case id, unitName, unitNumber, title, imageUrl, lessons
     }
     
     init(from decoder: Decoder) throws {
@@ -68,9 +105,8 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
         id = try container.decode(String.self, forKey: .id)
         unitName = try container.decode(String.self, forKey: .unitName)
         unitNumber = try container.decode(Int.self, forKey: .unitNumber)
-        title = try container.decode(String.self, forKey: .title)
+        title = try container.decode([String: String].self, forKey: .title)
         imageUrl = try container.decode(URL.self, forKey: .imageUrl)
-        language = try container.decode(String.self, forKey: .language)
         var lessonsContainer = try container.nestedUnkeyedContainer(forKey: .lessons)
         var lessons: [any LessonModel] = []
         
@@ -92,10 +128,6 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
                 lesson = try lessonsContainer.decode(GListeningFourModel.self)
             case .GSpeaking:
                 lesson = try lessonsContainer.decode(GSpeakingModel.self)
-            case .GWriting:
-                lesson = try lessonsContainer.decode(GWritingModel.self)
-            case .GInterpreting:
-                lesson = try lessonsContainer.decode(GInterpretingModel.self)
             }
             
             if let lesson = lesson {
@@ -114,7 +146,6 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
         try container.encode(unitNumber, forKey: .unitNumber)
         try container.encode(title, forKey: .title)
         try container.encode(imageUrl, forKey: .imageUrl)
-        try container.encode(language, forKey: .language)
         var lessonsContainer = container.nestedUnkeyedContainer(forKey: .lessons)
         for lesson in lessons {
             switch lesson.type {
@@ -122,10 +153,6 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
                 try lessonsContainer.encode(lesson as! GListeningModel)
             case .GSpeaking:
                 try lessonsContainer.encode(lesson as! GSpeakingModel)
-            case .GWriting:
-                try lessonsContainer.encode(lesson as! GWritingModel)
-            case .GInterpreting:
-                try lessonsContainer.encode(lesson as! GInterpretingModel)
             case .GListeningFour:
                 try lessonsContainer.encode(lesson as! GListeningFourModel)
             }
@@ -135,10 +162,9 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
         id: String? = nil,
         unitName: String? = nil,
         unitNumber: Int? = nil,
-        title: String? = nil,
+        title: [String: String]? = nil,
         imageUrl: URL? = nil,
-        lessons: [any LessonModel]? = nil,
-        language: String? = nil
+        lessons: [any LessonModel]? = nil
     ) -> UnitModel {
 
         return UnitModel(
@@ -147,8 +173,7 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
             unitNumber: unitNumber ?? self.unitNumber,
             title: title ?? self.title,
             imageUrl: imageUrl ?? self.imageUrl,
-            lessons: lessons ?? self.lessons,
-            language: language ?? self.language
+            lessons: lessons ?? self.lessons
         )
     }
     // Helper function to create specific lesson types
@@ -158,13 +183,10 @@ struct UnitModel: Codable, Identifiable, Equatable, Hashable {
         
         switch skill {
         case .GListening:
-            return GListeningModel(from: lessonDict)
+            let model = GListeningModel(from: lessonDict)
+            return model
         case .GSpeaking:
             return GSpeakingModel(from: lessonDict)
-        case .GWriting:
-            return GWritingModel(from: lessonDict)
-        case .GInterpreting:
-            return GInterpretingModel(from: lessonDict)
         case .GListeningFour:
             return GListeningFourModel(from: lessonDict)
         }

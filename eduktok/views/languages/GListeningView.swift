@@ -11,15 +11,17 @@ import AVKit
 struct ForeCardView: View {
     
     let model: ListeningModel
-    
     @ObservedObject var viewModel : GListeningViewModel
     @State private var player: AVAudioPlayer?
     
     var body: some View {
         VStack {
-            if (viewModel.shouldTransition) || (viewModel.isCardMatched ?? false) && (model.text == viewModel.titleModel?.text) {
+            if (viewModel.shouldTransition) || (viewModel.isCardMatched ?? false) && (
+                model.textDict[viewModel.languageCode!] == viewModel.titleModel?
+                    .textDict[viewModel.languageCode!]
+            ) {
                 HStack {
-                    Text(model.text)
+                    Text(model.textDict[viewModel.languageCode!]!)
                         .font(.headline) // Larger font size
                         .foregroundColor(.black)
                     Spacer()
@@ -30,6 +32,7 @@ struct ForeCardView: View {
                             .resizable()
                             .frame(width: 24, height: 24)
                     }
+                   
                 }
             }
             
@@ -38,7 +41,7 @@ struct ForeCardView: View {
         }
         .overlay(alignment: .center) { // Overlay modifier
             if (viewModel.tappedCardId == model.id) {
-                if (viewModel.isCardMatched ?? false) && (model.text == viewModel.titleModel?.text) {
+                if (viewModel.isCardMatched ?? false) && (model.textDict[viewModel.languageCode!]! == viewModel.titleModel?.textDict[viewModel.languageCode!]!) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.largeTitle)
                         .foregroundColor(.green)
@@ -74,9 +77,11 @@ struct ForeCardView: View {
                     print("❌ \(error.localizedDescription)")
                 }
             }
-            
-            
-            guard let url = model.audioUrl else { return }
+            let langCode = viewModel.languageCode!
+            let text = model.textDict[langCode]!;
+            let audioDict = viewModel.audioUrlDict!
+            var urlString = audioDict[langCode]![text]!
+            guard let url = URL(string:urlString)  else { return }
             URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if let error = error {
                     print("Error fetching audio: \(error)")
@@ -103,13 +108,13 @@ struct ForeCardView: View {
 
 struct BackCardView: View {
     let model: ListeningModel
-    
+    @ObservedObject var viewModel : GListeningViewModel
     @State private var player: AVAudioPlayer?
     
     var body: some View {
         VStack {
             HStack {
-                Text(model.text)
+                Text(model.textDict[viewModel.languageCode!]!)
                     .font(.headline) // Larger font size
                     .foregroundColor(.black)
                 Spacer()
@@ -133,7 +138,13 @@ struct BackCardView: View {
         )
         .shadow(radius: 3)        // Add a subtle shadow
         .onAppear {
-            guard let url = model.audioUrl else { return }
+            
+            let langCode = viewModel.languageCode!
+            let text = model.textDict[langCode]!;
+            let audioDict = viewModel.audioUrlDict!
+            var urlString = audioDict[langCode]![text]!
+
+            guard let url = URL(string:urlString)  else { return }
             
             URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if let error = error {
@@ -161,12 +172,13 @@ struct BackCardView: View {
 
 struct BackView: View {
     let models: [ListeningModel]
+    @ObservedObject var viewModel : GListeningViewModel
     
     var body: some View {
         ScrollView {
             LazyHStack {
                 ForEach(models) { model in
-                    BackCardView(model: model)
+                    BackCardView(model: model,viewModel: viewModel)
                         .frame(width: 200, height: 200)
                 }
             }
@@ -199,12 +211,19 @@ struct ForeView: View {
 struct GListeningView: View {
     let model: GListeningModel
     let onFinished: () -> Void
+    let languageCode: String
+    let audioUrlDict: [String: [String:String]]
     @StateObject private var viewModel = GListeningViewModel()
+    @State private var showTranslations = false
+    
+    var languages: [String] {
+         return Array(viewModel.titleModel!.textDict.keys).sorted()
+     }
     
     var body: some View {
         VStack(alignment:.center) {
             HStack (alignment:.center){
-                Text(viewModel.titleModel?.text ?? "")
+                Text(viewModel.titleModel?.textDict[viewModel.languageCode!]! ?? "")
                     .font(.title2) // Larger font size
                     .fontWeight(.bold) // Adds boldness
                 Button(action: {
@@ -214,21 +233,59 @@ struct GListeningView: View {
                         .resizable()
                         .frame(width: 24, height: 24)
                 }
+                Button(action: {
+                    showTranslations.toggle()
+                }) {
+                    Image(systemName: "questionmark.circle")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
             }
             .padding(20)
             .background(Color(.lightGray)) // Light background for the title
             .cornerRadius(8) // Rounded corners for the title container
-            BackView(models: viewModel.backModels)
+            BackView(models: viewModel.backModels, viewModel: viewModel)
                 .foregroundColor(Color.black.opacity(0.5))
             ForeView(models: viewModel.foreModels, viewModel: viewModel)
         }
+        .sheet(isPresented: $showTranslations) {
+                   TranslationsView(titleModel: viewModel.titleModel, languages: languages)
+               }
         .onAppear(){
             viewModel.backModels = model.backModels
             viewModel.foreModels = model.foreModels
             viewModel.titleModel = model.foreModels.first // Initialize titleModel
+            viewModel.onFinished = onFinished
+            viewModel.languageCode = languageCode
+            viewModel.audioUrlDict = audioUrlDict
             viewModel.preloadPlayInitialAudio() // Preload audio for the first title
             viewModel.setupAudioPlayers()
-            viewModel.onFinished = onFinished
+        }
+    }
+}
+
+struct TranslationsView: View {
+    let titleModel: ListeningModel?
+    let languages: [String]
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(languages, id: \.self) { language in
+                    VStack(alignment: .leading) {
+                        Text(language)
+                            .font(.headline)
+                        Text(titleModel?.textDict[language] ?? "Translation not available")
+                            .font(.body)
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+            .navigationTitle("Translations")
+            .navigationBarItems(trailing: Button("Done") {
+                presentationMode.wrappedValue.dismiss()
+            })
         }
     }
 }

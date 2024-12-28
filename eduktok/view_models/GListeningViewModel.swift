@@ -22,6 +22,8 @@ class GListeningViewModel: ObservableObject {
     private var titlePlayer: AVAudioPlayer?
     private var successSoundPlayer: AVAudioPlayer?
     private var errorSoundPlayer: AVAudioPlayer?
+    @Published var languageCode: String?
+    @Published var audioUrlDict: [String: [String:String]]?
     
     var onFinished: () -> Void = {}
     
@@ -51,7 +53,11 @@ class GListeningViewModel: ObservableObject {
     
     func preloadPlayInitialAudio() {
         guard let titleModel = titleModel else { return }
-        guard let url = titleModel.audioUrl else { return }
+        var text = titleModel.textDict[languageCode!];
+        var url = audioUrlDict![languageCode!]![text!]!;
+        guard let url = URL(string: url) else {
+            return
+        }
         
         URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
             if let error = error {
@@ -72,7 +78,10 @@ class GListeningViewModel: ObservableObject {
     
     func checkMatch(selectedModel: ListeningModel) {
         tappedCardId = selectedModel.id
-        if selectedModel.text == titleModel?.text {
+        guard let titleModel = titleModel else { return }
+        var titleText = titleModel.textDict[languageCode!];
+        var selectedText = selectedModel.textDict[languageCode!];
+        if selectedText == titleText{
             isCardMatched = true
             playSuccessSound() // Play success sound
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { // Auto-hide error

@@ -10,12 +10,14 @@ import SwiftUI
 struct GListeningFourView: View {
     let model: GListeningFourModel
     let onFinished: () -> Void
+    let languageCode: String
+    let audioUrlDict: [String: [String:String]]
     @StateObject private var viewModel = GListeningViewModel()
     
     var body: some View {
         VStack(alignment:.center) {
             HStack (alignment:.center){
-                Text(viewModel.titleModel?.text ?? "")
+                Text(viewModel.titleModel?.textDict[languageCode] ?? "")
                     .font(.title2) // Larger font size
                     .fontWeight(.bold) // Adds boldness
                 Button(action: {
@@ -34,9 +36,11 @@ struct GListeningFourView: View {
         .onAppear(){
             viewModel.foreModels = model.foreModels
             viewModel.titleModel = model.foreModels.first // Initialize titleModel
+            viewModel.onFinished = onFinished
+            viewModel.languageCode = languageCode
+            viewModel.audioUrlDict = audioUrlDict
             viewModel.preloadPlayInitialAudio() // Preload audio for the first title
             viewModel.setupAudioPlayers()
-            viewModel.onFinished = onFinished
         }
     }
 }

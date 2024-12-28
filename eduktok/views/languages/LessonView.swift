@@ -30,44 +30,14 @@ struct LessonView: View {
         }
     }
     
-    func deleteLesson(unitId: String, lessonId: String, lessonNumber: Int) async throws {
-        let db = Db()
-        do {
-            try await db.removeLessonFromUnit(unitId: unitId, lessonId: lessonId, unit: unit, lessonNumber: lessonNumber)
-            // Handle successful deletion
-            print("Lesson deleted successfully!")
-            // Show success message to user
-            showingDelSuccessMessage = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.showingDelSuccessMessage = false
-            }
-        } catch let error {
-            print("Error deleting lesson: \(error.localizedDescription)")
-            // Handle potential errors during deletion
-        }
-    }
-    
     @State private var showingDelSuccessMessage = false
-    
-    func getLanguageCode(selectedLanguage: String) -> String {
-        switch selectedLanguage {
-        case "German":
-            return "de-DE"
-        case "English":
-            return "en-US"
-        case "French":
-            return "fr-FR"
-        case "Spanish":
-            return "es-ES" // Assuming support for Spanish
-        default:
-            return "en-US" // A sensible default
-        }
-    }
     
     var body: some View {
         
         VStack {
             let currentLessonModel = unit.lessons[$currentLesson.wrappedValue]
+            let langCode = convertToLanguageCode(selectedLanguage)!
+            let audioDict = currentLessonModel.audioUrlDict
             
             if $isCompleted.wrappedValue || isUnitComplete() {
                 CompletionView(userModel: userModel, unit: unit, selectedLanguage: selectedLanguage)
@@ -78,21 +48,27 @@ struct LessonView: View {
                         currentLesson = 0
                     }
             } else if let listeningModel = currentLessonModel as? GListeningModel {
-                GListeningView(model: listeningModel, onFinished: nextView)
+                GListeningView(model: listeningModel,
+                               onFinished: nextView,
+                               languageCode: langCode,
+                               audioUrlDict: audioDict
+                )
                     .id(currentLesson)
             } else if let listeningModel = currentLessonModel as? GListeningFourModel {
-                GListeningFourView(model: listeningModel, onFinished: nextView)
+                GListeningFourView(model: listeningModel,
+                                   onFinished: nextView,
+                                   languageCode: langCode,
+                                   audioUrlDict: audioDict
+                )
                     .id(currentLesson)
             } else if let speakingModel = currentLessonModel as? GSpeakingModel {
                 GSpeakingView(
                     model: speakingModel,
                     onFinished: nextView,
-                    languageCode: getLanguageCode(selectedLanguage: selectedLanguage)
+                    languageCode: langCode,
+                    audioUrlDict: audioDict
                 )
                 .id(currentLesson)
-            } else if let interpretingModel = currentLessonModel as? GInterpretingModel {
-                GInterpretingView(model: interpretingModel, onFinished: nextView)
-                    .id(currentLesson)
             }
             
             if !(isUnitComplete()) {
@@ -119,20 +95,6 @@ struct LessonView: View {
                 Text("Lesson deleted successfully!")
                     .foregroundColor(.green)
                     .padding()
-            }
-            
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                if userModel.role == "admin" {
-                    Button(action: {
-                        Task {
-                            try? await deleteLesson(unitId: unit.id!, lessonId: getLessonId(index: currentLesson), lessonNumber: currentLesson)
-                            // If successful deletion, potentially adjust currentLesson or refresh data
-                        }
-                    }, label: {
-                        Image(systemName: "minus.circle")
-                            .foregroundColor(.red)
-                    })
-                }
             }
             
         }
@@ -293,3 +255,32 @@ func resetUnitProgress(userModel: UserModel, unit: UnitModel, selectedLanguage: 
     let newUser = userModel.copyWith(languageProgress: languageProgress)
     try await db.updateUser(user: newUser)
 }
+//    func deleteLesson(unitId: String, lessonId: String, lessonNumber: Int) async throws {
+//        let db = Db()
+//        do {
+//            try await db.removeLessonFromUnit(unitId: unitId, lessonId: lessonId, unit: unit, lessonNumber: lessonNumber)
+//            // Handle successful deletion
+//            print("Lesson deleted successfully!")
+//            // Show success message to user
+//            showingDelSuccessMessage = true
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                self.showingDelSuccessMessage = false
+//            }
+//        } catch let error {
+//            print("Error deleting lesson: \(error.localizedDescription)")
+//            // Handle potential errors during deletion
+//        }
+//    }
+//            if UIDevice.current.userInterfaceIdiom == .pad {
+//                if userModel.role == "admin" {
+//                    Button(action: {
+//                        Task {
+//                            try? await deleteLesson(unitId: unit.id!, lessonId: getLessonId(index: currentLesson), lessonNumber: currentLesson)
+//                            // If successful deletion, potentially adjust currentLesson or refresh data
+//                        }
+//                    }, label: {
+//                        Image(systemName: "minus.circle")
+//                            .foregroundColor(.red)
+//                    })
+//                }
+//            }

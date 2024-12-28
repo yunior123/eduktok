@@ -76,7 +76,7 @@ struct SignUpView: View {
                         Text(errorMessage)
                             .foregroundColor(.red)
                     }
-                    
+                    #warning("fix the apple button, it is always showing sign up")
                     SignInWithAppleButton(authMode == .signIn ? .signIn : .signUp) { request in
                         let nonce = randomNonceString()
                         currentNonce = nonce
