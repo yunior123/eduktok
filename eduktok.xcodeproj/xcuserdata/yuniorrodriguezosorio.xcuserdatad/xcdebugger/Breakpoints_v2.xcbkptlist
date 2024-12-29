@@ -1276,19 +1276,19 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "5F39D21E-E450-4FCF-9834-E98596B65281"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "eduktok/views/storekitpro/StoreKitProView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
             landmarkName = "fetchProduct()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "5F39D21E-E450-4FCF-9834-E98596B65281 - 74cc86148c362080"
+                  uuid = "5F39D21E-E450-4FCF-9834-E98596B65281 - 74cc86148c3620a1"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1298,11 +1298,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "96"
-                  endingLineNumber = "96">
+                  startingLineNumber = "97"
+                  endingLineNumber = "97">
                </Location>
                <Location
-                  uuid = "5F39D21E-E450-4FCF-9834-E98596B65281 - 74cc86148c362080"
+                  uuid = "5F39D21E-E450-4FCF-9834-E98596B65281 - 74cc86148c3620a1"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1312,8 +1312,8 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "96"
-                  endingLineNumber = "96">
+                  startingLineNumber = "97"
+                  endingLineNumber = "97">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1322,19 +1322,19 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "227586C6-57DD-4176-9535-0C043B6B7F27"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "eduktok/views/storekitpro/StoreKitProView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
             landmarkName = "fetchProduct()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - f1bfd9c7b144ca04"
+                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - f1bfd9c7b144ca25"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1344,11 +1344,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "92"
-                  endingLineNumber = "92">
+                  startingLineNumber = "93"
+                  endingLineNumber = "93">
                </Location>
                <Location
-                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - 963dabdcf525c644"
+                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - 963dabdcf525c665"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1358,11 +1358,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "92"
-                  endingLineNumber = "92">
+                  startingLineNumber = "93"
+                  endingLineNumber = "93">
                </Location>
                <Location
-                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - 96d1ae6a88630e97"
+                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - 96d1ae6a88630ec8"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1372,11 +1372,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "89"
-                  endingLineNumber = "89">
+                  startingLineNumber = "90"
+                  endingLineNumber = "90">
                </Location>
                <Location
-                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - 96d1ae6a88630e0a"
+                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - 96d1ae6a88630e2b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1386,11 +1386,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "92"
-                  endingLineNumber = "92">
+                  startingLineNumber = "93"
+                  endingLineNumber = "93">
                </Location>
                <Location
-                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - f3eb6a7607a6d40f"
+                  uuid = "227586C6-57DD-4176-9535-0C043B6B7F27 - f3eb6a7607a6d42e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1400,8 +1400,8 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/storekitpro/StoreKitProView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "92"
-                  endingLineNumber = "92">
+                  startingLineNumber = "93"
+                  endingLineNumber = "93">
                </Location>
             </Locations>
          </BreakpointContent>

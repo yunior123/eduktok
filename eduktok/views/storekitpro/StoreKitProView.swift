@@ -15,7 +15,6 @@ struct StoreKitProViewMP: View {
 
     var body: some View {
         ScrollView {
-            if let product = storeManager.product {
                 ZStack {
                     // Gradient background
                     LinearGradient(
@@ -39,20 +38,22 @@ struct StoreKitProViewMP: View {
                             .frame(maxWidth: 300, maxHeight: 300)
                             .cornerRadius(12)
 
-                        Text(product.displayName)
+                        Text(storeManager.product?.displayName ?? "Lifetime")
                             .font(.title)
                             .bold()
                             .foregroundColor(.blue)
 
-                        Text(product.description)
+                        Text(storeManager.product?.description ?? "Unlock Eduktok forever – Your language journey awaits!")
                             .font(.body)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.gray)
 
                         Button(action: {
-                            storeManager.purchaseProduct(product, userDocId)
+                            if let product = storeManager.product {
+                                storeManager.purchaseProduct(product, userDocId)
+                            }
                         }) {
-                            Text("Buy for \(product.displayPrice)")
+                            Text("Buy for \(storeManager.product?.displayPrice ?? "$17.99")")
                                 .font(.headline)
                                 .padding()
                                 .frame(maxWidth: .infinity)
@@ -64,15 +65,15 @@ struct StoreKitProViewMP: View {
                     .padding(2)
                 }
                 .padding()
-            } else {
-                ContentUnavailableView(
-                    "Product unavailable",
-                    systemImage: "cart",
-                    description: Text(
-                        "The product you are looking for is currently unavailable."
-                    )
-                )
-            }
+//            } else {
+//                ContentUnavailableView(
+//                    "Product unavailable",
+//                    systemImage: "cart",
+//                    description: Text(
+//                        "The product you are looking for is currently unavailable."
+//                    )
+//                )
+//            }
         }
         .onAppear {
             storeManager.fetchProduct()

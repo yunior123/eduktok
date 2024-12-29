@@ -62,8 +62,6 @@ struct HomeView: View {
             print(product)
         }
         .currentEntitlementTask(for: Products.lifetime) { taskState in
-            //print("currentEntitlementTask called")
-            //logger.info("Checking non renewable subscription status")
             if let verification = taskState.transaction,
                let transaction = try? verification.payloadValue {
                 print("Transaction: \(transaction)")
@@ -81,8 +79,8 @@ struct HomeView: View {
 func requestPermissions() async{
     SFSpeechRecognizer.requestAuthorization { status in
         switch status {
-        case .authorized:
-            print("Speech recognition authorized.")
+        case .authorized: break
+            //print("Speech recognition authorized.")
         case .denied:
             print("Speech recognition denied.")
             return
@@ -102,7 +100,7 @@ func requestPermissions() async{
             print("Microphone access denied.")
             return
         }
-        print("Microphone access granted")
+        //print("Microphone access granted")
     }
 }
 
