@@ -26,11 +26,24 @@ func uploadImageToFirebaseC(image: Data, path: String) async throws -> URL {
     // 1. Create a reference in Firebase Storage
     let storageRef = Storage.storage().reference().child(path)
     
-    // 2. Perform the upload task
+    // 2. Check if the file already exists and delete it
+    do {
+        let _ = try await storageRef.getMetadata()
+        try await storageRef.delete() // Delete the existing file
+        print("Existing image deleted.")
+    } catch {
+        if let error = error as? NSError, error.domain == StorageErrorDomain,
+           error.code == StorageErrorCode.objectNotFound.rawValue {
+            print("No existing image to delete, proceeding with upload.")
+        }
+        print(error.localizedDescription)
+    }
+    
+    // 3. Perform the upload task
     let metadata = StorageMetadata()
     let _ = try await storageRef.putDataAsync(image, metadata: metadata)
 
-    // 3. Retrieve download URL
+    // 4. Retrieve the download URL
     let downloadURL = try await storageRef.downloadURL()
     return downloadURL
 }

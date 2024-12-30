@@ -13,6 +13,14 @@ import Combine
 class Db {
     let firestore = Firestore.firestore()
     
+    func fetchLessonsForUnit(unitNumber: Int) async throws -> [DocumentSnapshot] {
+        let lessonsSnapshot = try await firestore.collection("lessonsNew")
+            .whereField("unitNumber", isEqualTo: unitNumber)
+            .getDocuments()
+        
+        return lessonsSnapshot.documents
+    }
+    
     func findUser(email: String) async throws -> UserModel? {
         let usersRef = firestore.collection("users")
         let query = usersRef.whereField("email", isEqualTo: email).limit(to: 1)

@@ -32,7 +32,7 @@ struct ForeCardView: View {
                             .resizable()
                             .frame(width: 24, height: 24)
                     }
-                   
+                    
                 }
             }
             
@@ -143,7 +143,7 @@ struct BackCardView: View {
             let text = model.textDict[langCode]!;
             let audioDict = viewModel.audioUrlDict!
             var urlString = audioDict[langCode]![text]!
-
+            
             guard let url = URL(string:urlString)  else { return }
             
             URLSession.shared.dataTask(with: url) { (data, response, error) in
@@ -172,39 +172,311 @@ struct BackCardView: View {
 
 struct BackView: View {
     let models: [ListeningModel]
-    @ObservedObject var viewModel : GListeningViewModel
+    @ObservedObject var viewModel: GListeningViewModel
+    let userModel: UserModel
+    let unitNumber: Int
+    let lessonId:String
+    
+    @State private var showImagePicker = false
+    @State private var selectedImage: UIImage?
+    @State private var selectedModelId: String?
+    
+    func updateModelImage(modelId: String, newImageUrl: URL, lessonId: String) async {
+        // Check and update foreModels
+        if let index = viewModel.foreModels.firstIndex(where: { $0.id == modelId }) {
+            viewModel.foreModels[index].imageUrl = newImageUrl
+        }
+        
+        // Check and update backModels
+        if let index = viewModel.backModels.firstIndex(where: { $0.id == modelId }) {
+            viewModel.backModels[index].imageUrl = newImageUrl
+        }
+        
+        // Update in Firestore
+        do {
+            try await updateModelInFirestore(
+                modelId: modelId,
+                imageUrl: newImageUrl,
+                lessonId: lessonId
+            )
+        } catch {
+            print("Error updating model in Firestore: \(error)")
+        }
+    }
+    
+    private func handleImageSelection(image: UIImage,modelId:String, lessonId: String) {
+        Task {
+            do {
+                guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                    print("Failed to convert image to data")
+                    return
+                }
+                
+                let path = createImageFilePath(
+                    unitNumber: unitNumber,
+                    id: lessonId+modelId
+                )
+                
+                let imageUrl = try await uploadImageToFirebaseC(
+                    image: imageData,
+                    path: path
+                )
+                
+                await updateModelImage(
+                    modelId: modelId,
+                    newImageUrl: imageUrl,
+                    lessonId: lessonId
+                )
+                
+            } catch {
+                print("Error uploading image: \(error)")
+            }
+        }
+    }
+    private func updateModelInFirestore(modelId: String, imageUrl: URL,lessonId: String) async throws {
+        let db = Db().firestore
+        let lessonRef = db.collection("lessonsNew").document(lessonId)
+        
+        // First, get the current document
+        let documentSnapshot = try await lessonRef.getDocument()
+        
+        guard let data = documentSnapshot.data() else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not retrieve document data"])
+        }
+        
+        // Get both model arrays
+        guard var foreModels = data["foreModels"] as? [[String: Any]],
+              var backModels = data["backModels"] as? [[String: Any]] else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not retrieve models"])
+        }
+        
+        var updatedForeModels = false
+        var updatedBackModels = false
+        
+        // Check and update foreModels
+        if let index = foreModels.firstIndex(where: { ($0["id"] as? String) == modelId }) {
+            var updatedModel = foreModels[index]
+            updatedModel["imageUrl"] = imageUrl.absoluteString
+            foreModels[index] = updatedModel
+            updatedForeModels = true
+        }
+        
+        // Check and update backModels
+        if let index = backModels.firstIndex(where: { ($0["id"] as? String) == modelId }) {
+            var updatedModel = backModels[index]
+            updatedModel["imageUrl"] = imageUrl.absoluteString
+            backModels[index] = updatedModel
+            updatedBackModels = true
+        }
+        
+        // Update the document with the modified arrays
+        var updateData: [String: Any] = [:]
+        
+        if updatedForeModels {
+            updateData["foreModels"] = foreModels
+        }
+        
+        if updatedBackModels {
+            updateData["backModels"] = backModels
+        }
+        
+        if !updateData.isEmpty {
+            try await lessonRef.updateData(updateData)
+        } else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Model ID not found in either foreModels or backModels"])
+        }
+    }
     
     var body: some View {
         ScrollView {
             LazyHStack {
                 ForEach(models) { model in
-                    BackCardView(model: model,viewModel: viewModel)
-                        .frame(width: 200, height: 200)
+                    ZStack(alignment: .topTrailing) {
+                        BackCardView(model: model, viewModel: viewModel)
+                            .frame(width: 200, height: 200)
+                        
+                        if userModel.role == "admin" {
+                            Button(action: {
+                                selectedModelId = model.id
+                                showImagePicker = true
+                            }) {
+                                Image(systemName: "pencil.circle.fill")
+                                    .foregroundColor(.blue)
+                                    .padding(8)
+                            }
+                        }
+                    }
                 }
             }
-            
         }
         .padding()
-        
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(selectedImage: $selectedImage)
+        }
+        .onChange(of: selectedImage) { old, newImage in
+            if let image = newImage,
+               let modelId = selectedModelId {
+                Task {
+                   handleImageSelection(image: image, modelId: modelId, lessonId: lessonId)
+                }
+            }
+        }
     }
 }
 
 struct ForeView: View {
     let models: [ListeningModel]
-    @ObservedObject var viewModel : GListeningViewModel
+    @ObservedObject var viewModel: GListeningViewModel
+    let userModel: UserModel
+    let unitNumber: Int
+    let lessonId: String
+    
+    @State private var showImagePicker = false
+    @State private var selectedImage: UIImage?
+    @State private var selectedModelId: String?
+    
     var body: some View {
-        ScrollView { // Horizontal scrolling
+        ScrollView {
             LazyHStack {
                 ForEach(models) { model in
-                    ForeCardView(model: model, viewModel: viewModel)
-                        .frame(width: 200, height: 200)
-                        .onTapGesture {
-                            viewModel.checkMatch(selectedModel: model)
+                    ZStack(alignment: .topTrailing) {
+                        ForeCardView(model: model, viewModel: viewModel)
+                            .frame(width: 200, height: 200)
+                            .onTapGesture {
+                                viewModel.checkMatch(selectedModel: model)
+                            }
+                        
+                        if userModel.role == "admin" {
+                            Button(action: {
+                                selectedModelId = model.id
+                                showImagePicker = true
+                            }) {
+                                Image(systemName: "pencil.circle.fill")
+                                    .foregroundColor(.blue)
+                                    .padding(8)
+                            }
                         }
+                    }
                 }
             }
         }
         .padding()
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(selectedImage: $selectedImage)
+        }
+        .onChange(of: selectedImage) { old,newImage in
+            if let image = newImage,
+               let modelId = selectedModelId {
+                Task {
+                     handleImageSelection(image: image, modelId: modelId, lessonId: lessonId)
+                }
+            }
+        }
+    }
+    func updateModelImage(modelId: String, newImageUrl: URL, lessonId: String) async {
+        // Check and update foreModels
+        if let index = viewModel.foreModels.firstIndex(where: { $0.id == modelId }) {
+            viewModel.foreModels[index].imageUrl = newImageUrl
+        }
+        
+        // Check and update backModels
+        if let index = viewModel.backModels.firstIndex(where: { $0.id == modelId }) {
+            viewModel.backModels[index].imageUrl = newImageUrl
+        }
+        
+        // Update in Firestore
+        do {
+            try await updateModelInFirestore(
+                modelId: modelId,
+                imageUrl: newImageUrl,
+                lessonId: lessonId
+            )
+        } catch {
+            print("Error updating model in Firestore: \(error)")
+        }
+    }
+    
+    private func handleImageSelection(image: UIImage,modelId:String, lessonId: String) {
+        Task {
+            do {
+                guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                    print("Failed to convert image to data")
+                    return
+                }
+                
+                let path = createImageFilePath(
+                    unitNumber: unitNumber,
+                    id: lessonId+modelId
+                )
+                
+                let imageUrl = try await uploadImageToFirebaseC(
+                    image: imageData,
+                    path: path
+                )
+                
+                await updateModelImage(
+                    modelId: modelId,
+                    newImageUrl: imageUrl,
+                    lessonId: lessonId
+                )
+                
+            } catch {
+                print("Error uploading image: \(error)")
+            }
+        }
+    }
+    private func updateModelInFirestore(modelId: String, imageUrl: URL,lessonId: String) async throws {
+        let db = Db().firestore
+        let lessonRef = db.collection("lessonsNew").document(lessonId)
+        
+        // First, get the current document
+        let documentSnapshot = try await lessonRef.getDocument()
+        
+        guard let data = documentSnapshot.data() else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not retrieve document data"])
+        }
+        
+        // Get both model arrays
+        guard var foreModels = data["foreModels"] as? [[String: Any]],
+              var backModels = data["backModels"] as? [[String: Any]] else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not retrieve models"])
+        }
+        
+        var updatedForeModels = false
+        var updatedBackModels = false
+        
+        // Check and update foreModels
+        if let index = foreModels.firstIndex(where: { ($0["id"] as? String) == modelId }) {
+            var updatedModel = foreModels[index]
+            updatedModel["imageUrl"] = imageUrl.absoluteString
+            foreModels[index] = updatedModel
+            updatedForeModels = true
+        }
+        
+        // Check and update backModels
+        if let index = backModels.firstIndex(where: { ($0["id"] as? String) == modelId }) {
+            var updatedModel = backModels[index]
+            updatedModel["imageUrl"] = imageUrl.absoluteString
+            backModels[index] = updatedModel
+            updatedBackModels = true
+        }
+        
+        // Update the document with the modified arrays
+        var updateData: [String: Any] = [:]
+        
+        if updatedForeModels {
+            updateData["foreModels"] = foreModels
+        }
+        
+        if updatedBackModels {
+            updateData["backModels"] = backModels
+        }
+        
+        if !updateData.isEmpty {
+            try await lessonRef.updateData(updateData)
+        } else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Model ID not found in either foreModels or backModels"])
+        }
     }
 }
 
@@ -213,12 +485,13 @@ struct GListeningView: View {
     let onFinished: () -> Void
     let languageCode: String
     let audioUrlDict: [String: [String:String]]
+    let userModel: UserModel
     @StateObject private var viewModel = GListeningViewModel()
     @State private var showTranslations = false
     
     var languages: [String] {
-         return Array(viewModel.titleModel!.textDict.keys).sorted()
-     }
+        return Array(viewModel.titleModel!.textDict.keys).sorted()
+    }
     
     var body: some View {
         VStack(alignment:.center) {
@@ -244,13 +517,26 @@ struct GListeningView: View {
             .padding(20)
             .background(Color(.lightGray)) // Light background for the title
             .cornerRadius(8) // Rounded corners for the title container
-            BackView(models: viewModel.backModels, viewModel: viewModel)
-                .foregroundColor(Color.black.opacity(0.5))
-            ForeView(models: viewModel.foreModels, viewModel: viewModel)
+            BackView(
+                models: viewModel.backModels,
+                viewModel: viewModel,
+                userModel: userModel,
+                unitNumber: model.unitNumber,
+                lessonId: model.id
+            )
+            .foregroundColor(Color.black.opacity(0.5))
+            
+            ForeView(
+                models: viewModel.foreModels,
+                viewModel: viewModel,
+                userModel: userModel,
+                unitNumber: model.unitNumber,
+                lessonId: model.id
+            )
         }
         .sheet(isPresented: $showTranslations) {
-                   TranslationsView(titleModel: viewModel.titleModel, languages: languages)
-               }
+            TranslationsView(titleModel: viewModel.titleModel, languages: languages)
+        }
         .onAppear(){
             viewModel.backModels = model.backModels
             viewModel.foreModels = model.foreModels

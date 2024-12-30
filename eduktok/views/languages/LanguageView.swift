@@ -97,60 +97,82 @@ struct CardGridView: View {
     let userModel: UserModel
     let selectedLanguage: String
     let isPro: Bool
-    let gridLayout = [
-        GridItem(.adaptive(minimum: 150, maximum: 250), spacing: 10),
-        GridItem(.adaptive(minimum: 150, maximum: 250), spacing: 10),
-    ]
+    
+    // Calculate rows based on dynamic column count
+    private func rows(in geometry: GeometryProxy) -> [[UnitModel]] {
+        let minCardWidth: CGFloat = 150
+        let spacing: CGFloat = 10
+        let availableWidth = geometry.size.width - 32 // Account for horizontal padding
+        let optimalColumnCount = max(2, Int(availableWidth / (minCardWidth + spacing)))
+        
+        var result: [[UnitModel]] = []
+        var currentRow: [UnitModel] = []
+        
+        for unit in units {
+            currentRow.append(unit)
+            if currentRow.count == optimalColumnCount {
+                result.append(currentRow)
+                currentRow = []
+            }
+        }
+        
+        if !currentRow.isEmpty {
+            result.append(currentRow)
+        }
+        
+        return result
+    }
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: gridLayout, spacing: 15) {
-                ForEach(
-                    units,
-                    id: \.id
-                ) { unit in
-                    ZStack {
-                        // If the user does not have lifetime access, they only get half the units.
-                        // Determine if the card should be interactive
-                        if isPro || (unit.unitNumber - 1) < units.count / 2 {
-                            NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
-                                UnitCardView(
-                                    unit: unit,
-                                    progress: unitProgress[unit.id!] ?? 0,
-                                    userModel: userModel,
-                                    selectedLanguage: selectedLanguage
-                                )
-                            }
-                            .disabled(unit.lessons.isEmpty)
-                        } else {
-                            UnitCardView(
-                                unit: unit,
-                                progress: unitProgress[unit.id!] ?? 0,
-                                userModel: userModel,
-                                selectedLanguage: selectedLanguage
-                            )
-                            .overlay(
-                                Color.black.opacity(0.5)
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        VStack {
-                                            Image(systemName: "crown.fill")
-                                                .foregroundColor(.yellow)
-                                                .font(.title)
-                                            Text("Unlock with premium")
-                                                .foregroundColor(.white)
-                                                .font(.headline)
-                                                .padding()
+        GeometryReader { geometry in
+            ScrollView {
+                Grid(horizontalSpacing: 10, verticalSpacing: 15) {
+                    let gridRows = rows(in: geometry)
+                    ForEach(gridRows.indices, id: \.self) { rowIndex in
+                        GridRow {
+                            ForEach(gridRows[rowIndex], id: \.id) { unit in
+                                ZStack {
+                                    if isPro || (unit.unitNumber - 1) < units.count / 2 {
+                                        NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
+                                            UnitCardView(
+                                                unit: unit,
+                                                progress: unitProgress[unit.id!] ?? 0,
+                                                userModel: userModel,
+                                                selectedLanguage: selectedLanguage
+                                            )
                                         }
-                                            .padding()
-                                        
-                                    )
-                            )
+                                    } else {
+                                        UnitCardView(
+                                            unit: unit,
+                                            progress: unitProgress[unit.id!] ?? 0,
+                                            userModel: userModel,
+                                            selectedLanguage: selectedLanguage
+                                        )
+                                        .overlay(
+                                            Color.black.opacity(0.5)
+                                                .cornerRadius(10)
+                                                .overlay(
+                                                    VStack {
+                                                        Image(systemName: "crown.fill")
+                                                            .foregroundColor(.yellow)
+                                                            .font(.title)
+                                                        Text("Unlock with premium")
+                                                            .foregroundColor(.white)
+                                                            .font(.headline)
+                                                            .padding()
+                                                    }
+                                                    .padding()
+                                                )
+                                        )
+                                    }
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
                         }
                     }
                 }
+                .padding(.horizontal)
             }
-            .padding(.top, 0)
         }
     }
 }
@@ -181,7 +203,7 @@ struct UnitCardView: View {
                 .frame(maxHeight: 150) // Constrain image height
                 .clipped()
             
-            Text("Progress: \(progress)/\(unit.lessons.count)")
+            Text("Progress: \(progress)/\(40)")
                 .foregroundColor(.blue)
                 .font(.caption).bold()
             
