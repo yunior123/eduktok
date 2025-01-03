@@ -63,9 +63,9 @@ struct LessonView: View {
                 }
                 
                 // Verify required common fields exist before creating models
-                guard let id = data["id"] as? String,
-                      let lessonNumber = data["lessonNumber"] as? Int,
-                      let audioUrlDict = data["audioUrlDict"] as? [String: [String:String]] else {
+                guard let _ = data["id"] as? String,
+                      let _ = data["lessonNumber"] as? Int,
+                      let _ = data["audioUrlDict"] as? [String: [String:String]] else {
                     print("❌ Missing required fields for document ID: \(document.documentID)")
                     continue
                 }
@@ -143,42 +143,66 @@ struct LessonView: View {
                                            languageCode: langCode,
                                            audioUrlDict: audioDict,
                                            userModel: userModel)
-                                .id(currentLesson)
+                            .id(currentLesson)
                         } else if let listeningModel = currentLessonModel as? GListeningFourModel {
                             GListeningFourView(model: listeningModel,
                                                onFinished: nextView,
                                                languageCode: langCode,
                                                audioUrlDict: audioDict,
                                                userModel: userModel)
-                                .id(currentLesson)
+                            .id(currentLesson)
                         } else if let speakingModel = currentLessonModel as? GSpeakingModel {
                             GSpeakingView(model: speakingModel,
                                           onFinished: nextView,
                                           languageCode: langCode,
                                           audioUrlDict: audioDict,
                                           userModel: userModel)
-                                .id(currentLesson)
+                            .id(currentLesson)
                         }
                     }
                     
                     // Lesson navigation buttons
                     if !lessons.isEmpty && !isUnitComplete() {
                         GeometryReader { geometry in
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 15) {
-                                    ForEach(0..<lessons.count, id: \.self) { lessonIndex in
-                                        let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id!]?[getLessonId(index: lessonIndex)]) != nil)
+                            ScrollViewReader { scrollProxy in
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 15) {
+                                        // Add leading spacer for initial padding
+                                        ForEach(0..<lessons.count, id: \.self) { lessonIndex in
+                                            let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id!]?[getLessonId(index: lessonIndex)]) != nil)
+                                            
+                                            LessonButton(lessonNumber: lessonIndex + 1,
+                                                         isCompleted: isLessonCompleted,
+                                                         currentLesson: currentLesson)
+                                            .id(lessonIndex)
+                                            .onTapGesture {
+                                                withAnimation {
+                                                    currentLesson = lessonIndex
+                                                    scrollProxy.scrollTo(lessonIndex, anchor: .center)
+                                                }
+                                            }
+                                        }
                                         
-                                        LessonButton(lessonNumber: lessonIndex + 1,
-                                                     isCompleted: isLessonCompleted,
-                                                     currentLesson: currentLesson)
-                                        .onTapGesture {
-                                            currentLesson = lessonIndex
+                                        // Add trailing spacer for final padding
+                                        Spacer()
+                                            .frame(width: max(0, (geometry.size.width - 60) / 2))
+                                    }
+                                    .padding()
+                                    .frame(minWidth: geometry.size.width)
+                                }
+                                .onChange(of: currentLesson) { old, newLesson in
+                                    withAnimation {
+                                        scrollProxy.scrollTo(newLesson, anchor: .center)
+                                    }
+                                }
+                                .onAppear {
+                                    // Center the initial lesson after a brief delay
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        withAnimation {
+                                            scrollProxy.scrollTo(currentLesson, anchor: .center)
                                         }
                                     }
                                 }
-                                .padding()
-                                .frame(minWidth: geometry.size.width, alignment: .center)
                             }
                         }
                         .frame(height: 80)

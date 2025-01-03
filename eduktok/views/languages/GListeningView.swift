@@ -80,7 +80,7 @@ struct ForeCardView: View {
             let langCode = viewModel.languageCode!
             let text = model.textDict[langCode]!;
             let audioDict = viewModel.audioUrlDict!
-            var urlString = audioDict[langCode]![text]!
+            let urlString = audioDict[langCode]![text]!
             guard let url = URL(string:urlString)  else { return }
             URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if let error = error {
@@ -142,7 +142,7 @@ struct BackCardView: View {
             let langCode = viewModel.languageCode!
             let text = model.textDict[langCode]!;
             let audioDict = viewModel.audioUrlDict!
-            var urlString = audioDict[langCode]![text]!
+            let urlString = audioDict[langCode]![text]!
             
             guard let url = URL(string:urlString)  else { return }
             
@@ -527,7 +527,7 @@ struct GListeningView: View {
             .foregroundColor(Color.black.opacity(0.5))
             
             ForeView(
-                models: viewModel.foreModels,
+                models: userModel.role == "admin" ? viewModel.foreModels : viewModel.foreModels.shuffled(),
                 viewModel: viewModel,
                 userModel: userModel,
                 unitNumber: model.unitNumber,

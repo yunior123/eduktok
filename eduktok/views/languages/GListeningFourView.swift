@@ -34,7 +34,7 @@ struct GListeningFourView: View {
             .background(Color(.lightGray)) // Light background for the title
             .cornerRadius(8) // Rounded corners for the title container
             ForeFourView(
-                models: viewModel.foreModels,
+                models: userModel.role == "admin" ? viewModel.foreModels : viewModel.foreModels.shuffled(),
                 viewModel: viewModel,
                 userModel: userModel,
                 unitNumber: model.unitNumber,

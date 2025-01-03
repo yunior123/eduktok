@@ -79,8 +79,8 @@ class GListeningViewModel: ObservableObject {
     func checkMatch(selectedModel: ListeningModel) {
         tappedCardId = selectedModel.id
         guard let titleModel = titleModel else { return }
-        var titleText = titleModel.textDict[languageCode!];
-        var selectedText = selectedModel.textDict[languageCode!];
+        let titleText = titleModel.textDict[languageCode!];
+        let selectedText = selectedModel.textDict[languageCode!];
         if selectedText == titleText{
             isCardMatched = true
             playSuccessSound() // Play success sound

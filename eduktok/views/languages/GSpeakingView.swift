@@ -79,7 +79,7 @@ struct GSpeakingView: View {
             }
         }
         .onAppear {
-            viewModel.models = model.models
+            viewModel.models = userModel.role == "admin" ? model.models : model.models.shuffled()
             viewModel.onFinished = onFinished
             viewModel.languageCode = languageCode
             viewModel.audioUrlDict = audioUrlDict
@@ -92,7 +92,7 @@ struct GSpeakingView: View {
         DispatchQueue.global(qos: .background).async {
             do {
                 let audioSession = AVAudioSession.sharedInstance()
-                try audioSession.setCategory(.playAndRecord, mode: .measurement, options: .duckOthers)
+                try audioSession.setCategory(.playAndRecord, mode: .measurement, options: [.mixWithOthers, .duckOthers])
                 try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
             } catch {
                 print("❌ Failed to set up play and record sessions")
@@ -263,7 +263,7 @@ struct SCardView: View {
             let langCode = viewModel.languageCode!
             let text = model.textDict[langCode]!;
             let audioDict = viewModel.audioUrlDict!
-            var urlString = audioDict[langCode]![text]!
+            let urlString = audioDict[langCode]![text]!
 
             guard let url = URL(string:urlString)  else { return }
             
@@ -276,8 +276,6 @@ struct SCardView: View {
                     print("No audio data found")
                     return
                 }
-                
-                //print("Audio data length: \(data.count) bytes")
                 
                 do {
                     player = try AVAudioPlayer(data: data)
@@ -511,4 +509,3 @@ struct UndulationView: View {
         }
     }
 }
-

@@ -13,8 +13,6 @@
 		523513352D09493000269184 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523513342D09493000269184 /* StoreKit.framework */; };
 		5241B8612B9821F3006B5A42 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5241B8602B9821F3006B5A42 /* SpeechRecognizer.swift */; };
 		525A4BED2BA93C63008A3863 /* fs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A4BEC2BA93C63008A3863 /* fs.swift */; };
-		525A4BEF2BA953AA008A3863 /* UnitCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A4BEE2BA953AA008A3863 /* UnitCreationView.swift */; };
-		525A4BF12BA9609A008A3863 /* LessonCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A4BF02BA9609A008A3863 /* LessonCreationView.swift */; };
 		525D72362BB2898700C6F0EF /* CacheAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525D72352BB2898700C6F0EF /* CacheAsyncImage.swift */; };
 		526BBE752BB8F72B001CD63E /* GListeningFourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526BBE742BB8F72B001CD63E /* GListeningFourView.swift */; };
 		526BBE772BB8FC73001CD63E /* GListeningFourModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526BBE762BB8FC73001CD63E /* GListeningFourModel.swift */; };
@@ -35,8 +33,6 @@
 		528336002B96BB13000F39B1 /* LessonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528335FF2B96BB13000F39B1 /* LessonView.swift */; };
 		528336022B96BB46000F39B1 /* LessonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528336012B96BB46000F39B1 /* LessonModel.swift */; };
 		528336042B96C0FD000F39B1 /* GSpeakingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528336032B96C0FD000F39B1 /* GSpeakingView.swift */; };
-		528336062B96C127000F39B1 /* GWritingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528336052B96C127000F39B1 /* GWritingView.swift */; };
-		528336082B96C155000F39B1 /* GInterpretingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528336072B96C155000F39B1 /* GInterpretingView.swift */; };
 		5283360A2B96CB1C000F39B1 /* GSpeakingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528336092B96CB1C000F39B1 /* GSpeakingModel.swift */; };
 		5283360C2B96CB75000F39B1 /* GWritingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283360B2B96CB75000F39B1 /* GWritingModel.swift */; };
 		5283360E2B96CC03000F39B1 /* GInterpretingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283360D2B96CC03000F39B1 /* GInterpretingModel.swift */; };
@@ -90,8 +86,6 @@
 		523513342D09493000269184 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		5241B8602B9821F3006B5A42 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		525A4BEC2BA93C63008A3863 /* fs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fs.swift; sourceTree = "<group>"; };
-		525A4BEE2BA953AA008A3863 /* UnitCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitCreationView.swift; sourceTree = "<group>"; };
-		525A4BF02BA9609A008A3863 /* LessonCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonCreationView.swift; sourceTree = "<group>"; };
 		525D72352BB2898700C6F0EF /* CacheAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheAsyncImage.swift; sourceTree = "<group>"; };
 		526BBE742BB8F72B001CD63E /* GListeningFourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GListeningFourView.swift; sourceTree = "<group>"; };
 		526BBE762BB8FC73001CD63E /* GListeningFourModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GListeningFourModel.swift; sourceTree = "<group>"; };
@@ -111,8 +105,6 @@
 		528335FF2B96BB13000F39B1 /* LessonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonView.swift; sourceTree = "<group>"; };
 		528336012B96BB46000F39B1 /* LessonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonModel.swift; sourceTree = "<group>"; };
 		528336032B96C0FD000F39B1 /* GSpeakingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GSpeakingView.swift; sourceTree = "<group>"; };
-		528336052B96C127000F39B1 /* GWritingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GWritingView.swift; sourceTree = "<group>"; };
-		528336072B96C155000F39B1 /* GInterpretingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GInterpretingView.swift; sourceTree = "<group>"; };
 		528336092B96CB1C000F39B1 /* GSpeakingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GSpeakingModel.swift; sourceTree = "<group>"; };
 		5283360B2B96CB75000F39B1 /* GWritingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GWritingModel.swift; sourceTree = "<group>"; };
 		5283360D2B96CC03000F39B1 /* GInterpretingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GInterpretingModel.swift; sourceTree = "<group>"; };
@@ -141,6 +133,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		523319842D27B154001619AC /* trash */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = trash; sourceTree = "<group>"; };
 		5235133C2D094C9100269184 /* storekitpro */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (Products.storekit, ); path = storekitpro; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -220,11 +213,7 @@
 				527DC0D32B9195BB007585F4 /* GListeningView.swift */,
 				528335FF2B96BB13000F39B1 /* LessonView.swift */,
 				528336032B96C0FD000F39B1 /* GSpeakingView.swift */,
-				528336052B96C127000F39B1 /* GWritingView.swift */,
-				528336072B96C155000F39B1 /* GInterpretingView.swift */,
 				5200A03E2BA3E43E00550E3E /* LanguageView.swift */,
-				525A4BEE2BA953AA008A3863 /* UnitCreationView.swift */,
-				525A4BF02BA9609A008A3863 /* LessonCreationView.swift */,
 				525D72352BB2898700C6F0EF /* CacheAsyncImage.swift */,
 				526BBE742BB8F72B001CD63E /* GListeningFourView.swift */,
 			);
@@ -255,6 +244,7 @@
 		52FB1EF22B8296DC001AB526 /* eduktok */ = {
 			isa = PBXGroup;
 			children = (
+				523319842D27B154001619AC /* trash */,
 				527EC0E02B8AA33400A8FD05 /* Info.plist */,
 				528243B92B86F87900C4B209 /* utils */,
 				52FB1F3A2B82DD4B001AB526 /* db */,
@@ -367,6 +357,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				523319842D27B154001619AC /* trash */,
 				5235133C2D094C9100269184 /* storekitpro */,
 			);
 			name = eduktok;
@@ -510,7 +501,6 @@
 				52FB1F392B82DC70001AB526 /* UserModel.swift in Sources */,
 				527DC0D42B9195BB007585F4 /* GListeningView.swift in Sources */,
 				528336002B96BB13000F39B1 /* LessonView.swift in Sources */,
-				525A4BEF2BA953AA008A3863 /* UnitCreationView.swift in Sources */,
 				5283360C2B96CB75000F39B1 /* GWritingModel.swift in Sources */,
 				5200A03F2BA3E43E00550E3E /* LanguageView.swift in Sources */,
 				5283360A2B96CB1C000F39B1 /* GSpeakingModel.swift in Sources */,
@@ -522,7 +512,6 @@
 				527DC0CE2B917951007585F4 /* SignUpView.swift in Sources */,
 				528243BB2B86F88B00C4B209 /* Utils.swift in Sources */,
 				52D5236D2D0C8D930002677C /* PurchaseRecord.swift in Sources */,
-				528336082B96C155000F39B1 /* GInterpretingView.swift in Sources */,
 				527DC0D02B917CAF007585F4 /* ForgotPasswordView.swift in Sources */,
 				528336042B96C0FD000F39B1 /* GSpeakingView.swift in Sources */,
 				5200A03B2BA28EF300550E3E /* GSpeakingViewModel.swift in Sources */,
@@ -534,10 +523,8 @@
 				526BBE772BB8FC73001CD63E /* GListeningFourModel.swift in Sources */,
 				527DC0D22B917F8B007585F4 /* VerifyEmailView.swift in Sources */,
 				528335FA2B960970000F39B1 /* GListeningViewModel.swift in Sources */,
-				525A4BF12BA9609A008A3863 /* LessonCreationView.swift in Sources */,
 				52EDFA742BA5DC5B006D2F38 /* UnitModel.swift in Sources */,
 				52E727972BAC07BF00144779 /* LaunchImage.swift in Sources */,
-				528336062B96C127000F39B1 /* GWritingView.swift in Sources */,
 				528336022B96BB46000F39B1 /* LessonModel.swift in Sources */,
 				52FB1EF42B8296DC001AB526 /* eduktokApp.swift in Sources */,
 				528243B62B86C9FB00C4B209 /* SettingsViewModel.swift in Sources */,

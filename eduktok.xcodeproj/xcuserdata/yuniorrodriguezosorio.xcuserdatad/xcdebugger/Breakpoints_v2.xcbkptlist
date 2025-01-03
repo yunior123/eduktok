@@ -1108,8 +1108,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "371"
-            endingLineNumber = "371"
+            startingLineNumber = "369"
+            endingLineNumber = "369"
             landmarkName = "loadAudioFile(filename:player:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1124,8 +1124,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "374"
-            endingLineNumber = "374"
+            startingLineNumber = "372"
+            endingLineNumber = "372"
             landmarkName = "loadAudioFile(filename:player:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1140,8 +1140,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "459"
-            endingLineNumber = "459"
+            startingLineNumber = "457"
+            endingLineNumber = "457"
             landmarkName = "showSuccessMessage()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1156,8 +1156,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "466"
-            endingLineNumber = "466"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
             landmarkName = "showRetryMessage()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1298,8 +1298,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
+            startingLineNumber = "466"
+            endingLineNumber = "466"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1314,8 +1314,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "439"
-            endingLineNumber = "439"
+            startingLineNumber = "463"
+            endingLineNumber = "463"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1330,8 +1330,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "438"
-            endingLineNumber = "438"
+            startingLineNumber = "462"
+            endingLineNumber = "462"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1346,8 +1346,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "521"
-            endingLineNumber = "521"
+            startingLineNumber = "545"
+            endingLineNumber = "545"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1362,8 +1362,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "522"
-            endingLineNumber = "522"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1378,8 +1378,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "445"
-            endingLineNumber = "445"
+            startingLineNumber = "469"
+            endingLineNumber = "469"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1426,8 +1426,8 @@
             filePath = "eduktok/views/languages/LessonView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "429"
-            endingLineNumber = "429"
+            startingLineNumber = "453"
+            endingLineNumber = "453"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -1842,34 +1842,6 @@
                   endingLineNumber = "43">
                </Location>
                <Location
-                  uuid = "419528CF-069E-40B9-9A99-312082013D7F - 7a8e6bdb9b051627"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(6) await resume partial function for eduktok.uploadImageToFirebaseC(image: Foundation.Data, path: Swift.String) async throws -&gt; Foundation.URL"
-                  moduleName = "eduktok.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/db/fs.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43">
-               </Location>
-               <Location
-                  uuid = "419528CF-069E-40B9-9A99-312082013D7F - 58b930ed4cfd43ed"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(7) suspend resume partial function for eduktok.uploadImageToFirebaseC(image: Foundation.Data, path: Swift.String) async throws -&gt; Foundation.URL"
-                  moduleName = "eduktok.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/db/fs.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43">
-               </Location>
-               <Location
                   uuid = "419528CF-069E-40B9-9A99-312082013D7F - fe6a8818715a8d26"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
@@ -1889,20 +1861,6 @@
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "(11) suspend resume partial function for eduktok.uploadImageToFirebaseC(image: Foundation.Data, path: Swift.String) async throws -&gt; Foundation.URL"
-                  moduleName = "eduktok.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/db/fs.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43">
-               </Location>
-               <Location
-                  uuid = "419528CF-069E-40B9-9A99-312082013D7F - bfd00df106c7c324"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(12) suspend resume partial function for eduktok.uploadImageToFirebaseC(image: Foundation.Data, path: Swift.String) async throws -&gt; Foundation.URL"
                   moduleName = "eduktok.debug.dylib"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/db/fs.swift"
