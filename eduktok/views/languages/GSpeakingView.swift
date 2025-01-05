@@ -84,23 +84,40 @@ struct GSpeakingView: View {
             viewModel.languageCode = languageCode
             viewModel.audioUrlDict = audioUrlDict
             activeCardIndex = 0
-            setupAudioSession()
+            setupAudioSessionForPlayAndRecord()
         }
     }
     
-    private func setupAudioSession() {
-        DispatchQueue.global(qos: .background).async {
+    private func deactivateAudioSession(completion: @escaping () -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
             do {
                 let audioSession = AVAudioSession.sharedInstance()
-                try audioSession.setCategory(.playAndRecord, mode: .measurement, options: [.mixWithOthers, .duckOthers])
-                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+                try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+                completion()
             } catch {
-                print("❌ Failed to set up play and record sessions")
+                print("❌ Failed to deactivate audio session")
                 print("❌ \(error.localizedDescription)")
+                completion()
             }
         }
     }
     
+    private func setupAudioSessionForPlayAndRecord() {
+        deactivateAudioSession {
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    let audioSession = AVAudioSession.sharedInstance()
+                    try audioSession.setCategory(.playAndRecord, mode: .measurement, options: .duckOthers)
+                    try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+                    print("✅ Audio session configured for play and record")
+                } catch {
+                    print("❌ Failed to set up play and record session")
+                    print("❌ \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
     private func handleImageSelection(image: UIImage, modelId: String, lessonId: String) {
         Task {
             do {
@@ -288,21 +305,18 @@ struct SCardView: View {
             
             loadAudioFile(filename: "success", player: &successPlayer)
             if successPlayer != nil {
-                //print("successPlayer loaded successfully.")
             } else {
                 print("Failed to load successPlayer.")
             }
             
             loadAudioFile(filename: "error", player: &errorPlayer)
             if errorPlayer != nil {
-                //print("errorPlayer loaded successfully.")
             } else {
                 print("Failed to load errorPlayer.")
             }
             
             loadAudioFile(filename: "mic-active", player: &micActivePlayer)
             if micActivePlayer != nil {
-                //print("micActivePlayer loaded successfully.")
             } else {
                 print("Failed to load micActivePlayer.")
             }
@@ -313,6 +327,12 @@ struct SCardView: View {
         }
         .onDisappear {
             speechRecognizer.stopRecognition()
+            micActivePlayer?.stop()
+            errorPlayer?.stop()
+            successPlayer?.stop()
+            micActivePlayer = nil
+            errorPlayer = nil
+            successPlayer = nil
         }
         .onChange(of: activeCardIndex) { _, newValue in
             if index == newValue {
@@ -509,3 +529,4 @@ struct UndulationView: View {
         }
     }
 }
+

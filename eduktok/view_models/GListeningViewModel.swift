@@ -53,8 +53,8 @@ class GListeningViewModel: ObservableObject {
     
     func preloadPlayInitialAudio() {
         guard let titleModel = titleModel else { return }
-        var text = titleModel.textDict[languageCode!];
-        var url = audioUrlDict![languageCode!]![text!]!;
+        let text = titleModel.textDict[languageCode!];
+        let url = audioUrlDict![languageCode!]![text!]!;
         guard let url = URL(string: url) else {
             return
         }
@@ -123,4 +123,14 @@ class GListeningViewModel: ObservableObject {
     func playAudio() {
         titlePlayer?.play()
     }
+    
+    func cleanupAudioPlayers() {
+        titlePlayer?.stop()
+        titlePlayer = nil
+        successSoundPlayer?.stop()
+        successSoundPlayer = nil
+        errorSoundPlayer?.stop()
+        errorSoundPlayer = nil
+    }
+
 }

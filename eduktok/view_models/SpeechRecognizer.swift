@@ -79,7 +79,7 @@ enum StreamingSpeechError: Error {
 extension StreamingSpeechRecognizer: SFSpeechRecognizerDelegate {
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         // Handle changes in speech recognition availability
-        print("Speech recognition availability changed: \(available)")
+        //print("Speech recognition availability changed: \(available)")
     }
 }
 

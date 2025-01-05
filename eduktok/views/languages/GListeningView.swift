@@ -63,41 +63,29 @@ struct ForeCardView: View {
         .onAppear {
             DispatchQueue.global(qos: .background).async {
                 do {
-                    // Prepare the audio session
-                    let audioSession = AVAudioSession.sharedInstance()
-                    try audioSession
-                        .setCategory(
-                            .playback,
-                            mode: .spokenAudio,
-                            options: .duckOthers
-                        )
-                    try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-                } catch {
-                    print("❌ Failed to set up playback audio session")
-                    print("❌ \(error.localizedDescription)")
-                }
+                    let langCode = viewModel.languageCode!
+                    let text = model.textDict[langCode]!;
+                    let audioDict = viewModel.audioUrlDict!
+                    let urlString = audioDict[langCode]![text]!
+                    guard let url = URL(string:urlString)  else { return }
+                    URLSession.shared.dataTask(with: url) { (data, response, error) in
+                        if let error = error {
+                            print("Error fetching audio: \(error)")
+                            return
+                        }
+                        
+                        guard let data = data else {
+                            print("No audio data found")
+                            return
+                        }
+                        
+                        player = try? AVAudioPlayer(data: data)
+                        player?.prepareToPlay()
+                        player?.volume = 1.0
+                        
+                    }.resume()
+                } 
             }
-            let langCode = viewModel.languageCode!
-            let text = model.textDict[langCode]!;
-            let audioDict = viewModel.audioUrlDict!
-            let urlString = audioDict[langCode]![text]!
-            guard let url = URL(string:urlString)  else { return }
-            URLSession.shared.dataTask(with: url) { (data, response, error) in
-                if let error = error {
-                    print("Error fetching audio: \(error)")
-                    return
-                }
-                
-                guard let data = data else {
-                    print("No audio data found")
-                    return
-                }
-                
-                player = try? AVAudioPlayer(data: data)
-                player?.prepareToPlay()
-                player?.volume = 1.0
-                
-            }.resume()
         }
     }
     
@@ -544,11 +532,43 @@ struct GListeningView: View {
             viewModel.onFinished = onFinished
             viewModel.languageCode = languageCode
             viewModel.audioUrlDict = audioUrlDict
-            viewModel.preloadPlayInitialAudio() // Preload audio for the first title
+            setupAudioSessionForPlayback()
+            viewModel.preloadPlayInitialAudio()
             viewModel.setupAudioPlayers()
         }
     }
 }
+
+private func deactivateAudioSession(completion: @escaping () -> Void) {
+    DispatchQueue.global(qos: .userInitiated).async {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            completion()
+        } catch {
+            print("❌ Failed to deactivate audio session")
+            print("❌ \(error.localizedDescription)")
+            completion()
+        }
+    }
+}
+
+private func setupAudioSessionForPlayback() {
+    deactivateAudioSession {
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let audioSession = AVAudioSession.sharedInstance()
+                try audioSession.setCategory(.playback, mode: .spokenAudio, options: [])
+                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+                print("✅ Audio session configured for playback")
+            } catch {
+                print("❌ Failed to set up playback session")
+                print("❌ \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
 
 struct TranslationsView: View {
     let titleModel: ListeningModel?
@@ -575,3 +595,4 @@ struct TranslationsView: View {
         }
     }
 }
+

@@ -16,6 +16,17 @@ struct GListeningFourView: View {
     let userModel: UserModel
     @StateObject private var viewModel = GListeningViewModel()
     
+    private func cleanupAudioSession() {
+        viewModel.cleanupAudioPlayers()
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            try audioSession.setCategory(.ambient, mode: .default, options: [])
+        } catch {
+            print("Failed to reset audio session: \(error)")
+        }
+    }
+    
     var body: some View {
         VStack(alignment:.center) {
             HStack (alignment:.center){
@@ -41,14 +52,45 @@ struct GListeningFourView: View {
                 lessonId: model.id
             )
         }
-        .onAppear(){
+        .onAppear {
             viewModel.foreModels = model.foreModels
-            viewModel.titleModel = model.foreModels.first // Initialize titleModel
+            viewModel.titleModel = model.foreModels.first
             viewModel.onFinished = onFinished
             viewModel.languageCode = languageCode
             viewModel.audioUrlDict = audioUrlDict
-            viewModel.preloadPlayInitialAudio() // Preload audio for the first title
+            setupAudioSessionForPlayback()
+            viewModel.preloadPlayInitialAudio()
             viewModel.setupAudioPlayers()
+        }
+    }
+}
+
+private func deactivateAudioSession(completion: @escaping () -> Void) {
+    DispatchQueue.global(qos: .userInitiated).async {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            completion()
+        } catch {
+            print("❌ Failed to deactivate audio session")
+            print("❌ \(error.localizedDescription)")
+            completion()
+        }
+    }
+}
+
+private func setupAudioSessionForPlayback() {
+    deactivateAudioSession {
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let audioSession = AVAudioSession.sharedInstance()
+                try audioSession.setCategory(.playback, mode: .spokenAudio, options: [])
+                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+                print("✅ Audio session configured for playback")
+            } catch {
+                print("❌ Failed to set up playback session")
+                print("❌ \(error.localizedDescription)")
+            }
         }
     }
 }

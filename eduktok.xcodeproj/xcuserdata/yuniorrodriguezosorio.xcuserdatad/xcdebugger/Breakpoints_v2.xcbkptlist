@@ -1108,8 +1108,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "369"
-            endingLineNumber = "369"
+            startingLineNumber = "389"
+            endingLineNumber = "389"
             landmarkName = "loadAudioFile(filename:player:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1124,8 +1124,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "372"
-            endingLineNumber = "372"
+            startingLineNumber = "392"
+            endingLineNumber = "392"
             landmarkName = "loadAudioFile(filename:player:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1140,8 +1140,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "457"
-            endingLineNumber = "457"
+            startingLineNumber = "477"
+            endingLineNumber = "477"
             landmarkName = "showSuccessMessage()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1156,8 +1156,8 @@
             filePath = "eduktok/views/languages/GSpeakingView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "464"
-            endingLineNumber = "464"
+            startingLineNumber = "484"
+            endingLineNumber = "484"
             landmarkName = "showRetryMessage()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1474,8 +1474,8 @@
             filePath = "eduktok/views/languages/GListeningFourView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "handleImageSelection(image:modelId:lessonId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1490,8 +1490,8 @@
             filePath = "eduktok/views/languages/GListeningFourView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
             landmarkName = "handleImageSelection(image:modelId:lessonId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1506,8 +1506,8 @@
             filePath = "eduktok/views/languages/GListeningFourView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "handleImageSelection(image:modelId:lessonId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1522,8 +1522,8 @@
             filePath = "eduktok/views/languages/GListeningFourView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -1538,8 +1538,8 @@
             filePath = "eduktok/views/languages/GListeningFourView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "192"
-            endingLineNumber = "192"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
             landmarkName = "handleImageSelection(image:modelId:lessonId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1554,13 +1554,13 @@
             filePath = "eduktok/views/languages/GListeningView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "225"
-            endingLineNumber = "225"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "handleImageSelection(image:modelId:lessonId:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "BD8C61CB-5CCA-4B0D-8594-D65DDDAD56A4 - 2a58581cf2c66b1b"
+                  uuid = "BD8C61CB-5CCA-4B0D-8594-D65DDDAD56A4 - 2a58581cf2c66967"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1570,11 +1570,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/languages/GListeningView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "225"
-                  endingLineNumber = "225">
+                  startingLineNumber = "213"
+                  endingLineNumber = "213">
                </Location>
                <Location
-                  uuid = "BD8C61CB-5CCA-4B0D-8594-D65DDDAD56A4 - 1ae070556d33b51a"
+                  uuid = "BD8C61CB-5CCA-4B0D-8594-D65DDDAD56A4 - 1ae070556d33b766"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1584,11 +1584,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/languages/GListeningView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "225"
-                  endingLineNumber = "225">
+                  startingLineNumber = "213"
+                  endingLineNumber = "213">
                </Location>
                <Location
-                  uuid = "BD8C61CB-5CCA-4B0D-8594-D65DDDAD56A4 - 1ef988027f64ec3d"
+                  uuid = "BD8C61CB-5CCA-4B0D-8594-D65DDDAD56A4 - 1ef988027f64ee41"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1598,8 +1598,8 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/languages/GListeningView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "225"
-                  endingLineNumber = "225">
+                  startingLineNumber = "213"
+                  endingLineNumber = "213">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1614,13 +1614,13 @@
             filePath = "eduktok/views/languages/GListeningView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
+            startingLineNumber = "208"
+            endingLineNumber = "208"
             landmarkName = "handleImageSelection(image:modelId:lessonId:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "6986E007-892A-4608-874A-72F4BD9A2EFF - 28e2341c163ac557"
+                  uuid = "6986E007-892A-4608-874A-72F4BD9A2EFF - 28e2341c163acbe3"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1630,11 +1630,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/languages/GListeningView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "220"
-                  endingLineNumber = "220">
+                  startingLineNumber = "208"
+                  endingLineNumber = "208">
                </Location>
                <Location
-                  uuid = "6986E007-892A-4608-874A-72F4BD9A2EFF - 2a58581cf2c6687c"
+                  uuid = "6986E007-892A-4608-874A-72F4BD9A2EFF - 2a58581cf2c666c8"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1644,11 +1644,11 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/languages/GListeningView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "220"
-                  endingLineNumber = "220">
+                  startingLineNumber = "208"
+                  endingLineNumber = "208">
                </Location>
                <Location
-                  uuid = "6986E007-892A-4608-874A-72F4BD9A2EFF - 52b93ae9a484d5b"
+                  uuid = "6986E007-892A-4608-874A-72F4BD9A2EFF - 52b93ae9a4843ef"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1658,8 +1658,8 @@
                   urlString = "file:///Users/yuniorrodriguezosorio/Documents/GitHub/eduktok/eduktok/views/languages/GListeningView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "220"
-                  endingLineNumber = "220">
+                  startingLineNumber = "208"
+                  endingLineNumber = "208">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1870,6 +1870,70 @@
                   endingLineNumber = "43">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EFEB90D1-9092-451A-8EDE-8AF23957585B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "eduktok/views/languages/GListeningFourView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "26E41765-EA48-4E27-9A88-6C23AB31FFF3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "eduktok/views/languages/GListeningView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "535"
+            endingLineNumber = "535"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "285FD1D0-6568-42E4-A7C7-B70B11CBACD3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "eduktok/views/languages/GListeningFourView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "49832DB9-CF36-457A-AE1A-250F6B835E22"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "eduktok/views/languages/GSpeakingView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "329"
+            endingLineNumber = "329"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
