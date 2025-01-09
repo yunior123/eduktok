@@ -312,23 +312,117 @@ struct LessonView: View {
         let unit: UnitModel
         let selectedLanguage: String
         let lessons: [any LessonModel]
+        @Environment(\.dismiss) private var dismiss
+        
+        // Success phrases in different languages
+        private let successPhrases: [String: (congrats: String, message: String)] = [
+            "en": ("Amazing!", "You've mastered this unit!"),
+
+        ]
+        
+        private var currentLanguagePhrases: (congrats: String, message: String) {
+            successPhrases["en"]!
+        }
         
         var body: some View {
-            VStack {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.largeTitle)
-                    .foregroundColor(.green)
-                Text("All Done!")
-                    .font(.headline)
-                Button("Restart Unit") {
-                    Task {
-                        try await resetUnitProgress()
+            VStack(spacing: 24) {
+                // Top celebration section
+                VStack(spacing: 16) {
+                    ZStack {
+                        // Pulsating background rings
+                        ForEach(0..<3) { i in
+                            Circle()
+                                .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                .frame(width: 80 + CGFloat(i * 30),
+                                       height: 80 + CGFloat(i * 30))
+                                .scaleEffect(1 + 0.1 * sin(Double(i) * .pi / 2))
+                                .animation(.easeInOut(duration: 1.5).repeatForever(),
+                                          value: UUID())
+                        }
+                        
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(.green)
+                            .symbolEffect(.bounce)
+                    }
+                    .frame(height: 120)
+                    
+                    // Success text in both languages
+                    VStack(spacing: 8) {
+                        Text(currentLanguagePhrases.congrats)
+                            .font(.title.bold())
+                            .foregroundStyle(.primary)
+                        
+                        Text(currentLanguagePhrases.message)
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
                     }
                 }
-                .buttonStyle(.borderedProminent)
+                
+                // Progress Stats
+                HStack(spacing: 20) {
+                    StatView(
+                        value: "\(lessons.count)",
+                        label: "Lessons",
+                        icon: "book.fill",
+                        color: .blue
+                    )
+                    
+                    StatView(
+                        value: "100%",
+                        label: "Complete",
+                        icon: "star.fill",
+                        color: .yellow
+                    )
+                }
+                
+                // Motivational message
+                VStack(spacing: 4) {
+                    Text("🎯 Keep up the great work!")
+                        .font(.headline)
+                    Text("Your language skills are getting stronger every day")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                Spacer()
+                
+                // Action Buttons
+                VStack(spacing: 12) {
+                    Button(action: {
+                        Task {
+                            try await resetUnitProgress()
+                            dismiss()
+                        }
+                    }) {
+                        Label("Practice Again", systemImage: "arrow.clockwise")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    
+                    Button(action: { dismiss() }) {
+                        Label("Continue Learning", systemImage: "arrow.right")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .foregroundColor(.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                }
             }
-            .padding()
-            .background(.ultraThinMaterial)
+            .padding(24)
+            .background(Material.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         
         private func resetUnitProgress() async throws {
@@ -344,6 +438,41 @@ struct LessonView: View {
             languageProgress[userModel.learningLanguage ?? selectedLanguage] = languageData
             let newUser = userModel.copyWith(languageProgress: languageProgress)
             try await db.updateUser(user: newUser)
+        }
+    }
+
+    // Supporting Views
+    struct StatView: View {
+        let value: String
+        let label: String
+        let icon: String
+        let color: Color
+        
+        var body: some View {
+            VStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.2))
+                        .frame(width: 50, height: 50)
+                    
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundStyle(color)
+                }
+                
+                VStack(spacing: 4) {
+                    Text(value)
+                        .font(.title2.bold())
+                        .foregroundColor(color)
+                    Text(label)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color(.systemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
     
