@@ -41,6 +41,11 @@ service-account*.json
 # Firebase CLI project config
 .firebaserc
 firebase.json
+firestore.rules
+firestore.indexes.json
+
+# OrignaL — separate project living in this directory, not part of eduktok
+OrignaL/
 
 # Content data files (large, not app source)
 units.json
