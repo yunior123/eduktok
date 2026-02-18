@@ -8,72 +8,81 @@
 import Foundation
 import StoreKit
 import SwiftUI
+import FirebaseAuth
 
 struct StoreKitProViewMP: View {
     @StateObject private var storeManager = StoreManager()
     let userDocId: String
 
     var body: some View {
-        ScrollView {
-                ZStack {
-                    // Gradient background
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.blue.opacity(0.8), Color.purple.opacity(0.8),
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .blur(radius: 10)
-                    .edgesIgnoringSafeArea(.all)  // Covers entire background
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white)  // White background for the rectangle
-                        .shadow(radius: 8)
-                        .padding()
+        ZStack {
+            OrignaLBackdrop()
+            ScrollView {
+                VStack(spacing: 16) {
+                    Image("artwork")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 320, maxHeight: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .stroke(OrignaLTheme.ice.opacity(0.25), lineWidth: 1)
+                        )
 
-                    VStack(spacing: 16) {
-                        Image("artwork")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 300, maxHeight: 300)
-                            .cornerRadius(12)
+                    Text(storeManager.product?.displayName ?? "Lifetime")
+                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .foregroundStyle(OrignaLTheme.ice)
+                        .accessibilityIdentifier("store.title")
 
-                        Text(storeManager.product?.displayName ?? "Lifetime")
-                            .font(.title)
-                            .bold()
-                            .foregroundColor(.blue)
+                    Text(storeManager.product?.description ?? "Unlock every unit and lesson forever.")
+                        .font(.body.weight(.medium))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(OrignaLTheme.ice.opacity(0.88))
+                        .accessibilityIdentifier("store.description")
 
-                        Text(storeManager.product?.description ?? "Unlock Eduktok forever – Your language journey awaits!")
-                            .font(.body)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.gray)
-
-                        Button(action: {
-                            if let product = storeManager.product {
-                                storeManager.purchaseProduct(product, userDocId)
-                            }
-                        }) {
-                            Text("Buy for \(storeManager.product?.displayPrice ?? "$17.99")")
-                                .font(.headline)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                        }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Unlimited access to all 50 units", systemImage: "checkmark.seal.fill")
+                        Label("All phrase images and lesson audio", systemImage: "waveform.circle.fill")
+                        Label("No monthly fee. Pay once.", systemImage: "crown.fill")
                     }
-                    .padding(2)
+                    .foregroundStyle(OrignaLTheme.ice)
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Button(action: {
+                        if let product = storeManager.product {
+                            storeManager.purchaseProduct(product, userDocId)
+                        }
+                    }) {
+                        Text("Buy for \(storeManager.product?.displayPrice ?? "$17.99")")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, minHeight: 52)
+                            .background(OrignaLTheme.buttonGradient)
+                            .foregroundStyle(Color.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                    }
+                    .accessibilityIdentifier("store.buyButton")
+
+                    #if DEBUG
+                    if UITestLaunchFlags.usesRealDatabaseFlow {
+                        Button("Test Activate Lifetime") {
+                            Task {
+                                await storeManager.activateLifetimeForUITest(userDocId: userDocId)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(Color.white.opacity(0.14))
+                        .foregroundStyle(OrignaLTheme.ice)
+                        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                        .accessibilityIdentifier("store.testLifetimeButton")
+                    }
+                    #endif
                 }
-                .padding()
-//            } else {
-//                ContentUnavailableView(
-//                    "Product unavailable",
-//                    systemImage: "cart",
-//                    description: Text(
-//                        "The product you are looking for is currently unavailable."
-//                    )
-//                )
-//            }
+                .padding(18)
+                .orignalGlassCard()
+                .padding(16)
+            }
         }
         .onAppear {
             storeManager.fetchProduct()
@@ -121,15 +130,13 @@ class StoreManager: ObservableObject {
                     switch verification {
                     case .verified(let transaction):
                         print("Purchase successful and verified!")
-                        #warning("TODO: change environment to production when ready")
-                   
                         let transactionRecord = PurchaseRecord(
                             userDocId: userDocId,
                             appAccountToken: appAccountToken,
                             productId: product.id,
                             date: Date(),
                             transactionId: String(transaction.id),
-                            environment: "sandbox"
+                            environment: transaction.environment.rawValue
                         )
                         // Save the purchase record to Firestore
                         do {
@@ -148,14 +155,12 @@ class StoreManager: ObservableObject {
                                 "Failed to save purchase record or grant access: \(error.localizedDescription)"
                             )
                         }
-                        #warning(
-                            "Mark transactions as finish after granting user access to their purchase"
-                        )
-                        await transaction.finish()  // Mark transaction as complete
-                    case .unverified(_, let error):
+                        await transaction.finish()
+                    case .unverified(let transaction, let error):
                         print(
                             "Purchase successful but unverified: \(error.localizedDescription)"
                         )
+                        await transaction.finish()
                     }
                 case .userCancelled:
                     print("User cancelled the purchase.")
@@ -176,6 +181,29 @@ class StoreManager: ObservableObject {
     func grantAccessToContent() async {
         await MainActor.run { [weak self] in
             self?.hasLifetimeAccess = true
+        }
+    }
+
+    func activateLifetimeForUITest(userDocId: String) async {
+        do {
+            let db = Db()
+            if let email = Auth.auth().currentUser?.email,
+               let user = try await db.findUser(email: email) {
+                try await db.updateUser(user: user.copyWith(hasLifetimeAccess: true))
+            }
+
+            let transactionRecord = PurchaseRecord(
+                userDocId: userDocId,
+                appAccountToken: UUID(),
+                productId: Products.lifetime,
+                date: Date(),
+                transactionId: "ui-test-\(UUID().uuidString)",
+                environment: "ui-test"
+            )
+            _ = try await db.createPurchaseRecord(transactionRecord)
+            await grantAccessToContent()
+        } catch {
+            print("UITest lifetime activation failed: \(error.localizedDescription)")
         }
     }
 }

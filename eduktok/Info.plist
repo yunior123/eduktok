@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDisplayName</key>
+	<string>OrignaL</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -15,42 +17,29 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>firebasestorage.googleapis.com</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
-    <key>NSPrivacyFileProtectionType</key>
-    <array>
-        <string>NSPrivacyFileProtectionNone</string>
-    </array>
-    <key>NSPrivacyTemporaryFileCreation</key>
-    <array>
-        <string>Eduktok requires access to temporary files for caching purposes.</string>
-    </array>
-    <key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
-    <array>
-        <string>Eduktok uses file timestamps for tracking document modification dates.</string>
-    </array>
-    <key>NSPrivacyAccessedAPICategoryUserDefaults</key>
-    <array>
-        <string>Eduktok requires access to user defaults for storing user preferences.</string>
-    </array>
-    <key>NSPrivacyAccessedAPICategorySystemBootTime</key>
-    <array>
-        <string>Eduktok uses system boot time for tracking application startup performance.</string>
-    </array>
-    <key>NSPrivacyAccessedAPICategoryDiskSpace</key>
-    <array>
-        <string>Eduktok needs to monitor disk space for optimizing storage usage.</string>
-    </array>
+	<key>NSPrivacyAccessedAPICategoryDiskSpace</key>
+	<array>
+		<string>OrignaL needs to monitor disk space for optimizing storage usage.</string>
+	</array>
+	<key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
+	<array>
+		<string>OrignaL uses file timestamps for tracking document modification dates.</string>
+	</array>
+	<key>NSPrivacyAccessedAPICategorySystemBootTime</key>
+	<array>
+		<string>OrignaL uses system boot time for tracking application startup performance.</string>
+	</array>
+	<key>NSPrivacyAccessedAPICategoryUserDefaults</key>
+	<array>
+		<string>OrignaL requires access to user defaults for storing user preferences.</string>
+	</array>
+	<key>NSPrivacyFileProtectionType</key>
+	<array>
+		<string>NSPrivacyFileProtectionNone</string>
+	</array>
+	<key>NSPrivacyTemporaryFileCreation</key>
+	<array>
+		<string>OrignaL requires access to temporary files for caching purposes.</string>
+	</array>
 </dict>
 </plist>

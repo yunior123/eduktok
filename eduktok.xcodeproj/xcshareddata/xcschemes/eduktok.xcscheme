@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "52FB1EEF2B8296DC001AB526"
-               BuildableName = "eduktok.app"
+               BuildableName = "OrignaL.app"
                BlueprintName = "eduktok"
                ReferencedContainer = "container:eduktok.xcodeproj">
             </BuildableReference>
@@ -68,7 +68,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "52FB1EEF2B8296DC001AB526"
-            BuildableName = "eduktok.app"
+            BuildableName = "OrignaL.app"
             BlueprintName = "eduktok"
             ReferencedContainer = "container:eduktok.xcodeproj">
          </BuildableReference>
@@ -85,7 +85,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "52FB1EEF2B8296DC001AB526"
-            BuildableName = "eduktok.app"
+            BuildableName = "OrignaL.app"
             BlueprintName = "eduktok"
             ReferencedContainer = "container:eduktok.xcodeproj">
          </BuildableReference>

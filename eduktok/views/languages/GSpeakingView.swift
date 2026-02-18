@@ -225,7 +225,7 @@ struct SCardView: View {
         VStack {
             VStack {
                 HStack {
-                    Text(model.textDict[viewModel.languageCode!]!)
+                    Text(model.textDict[viewModel.languageCode ?? "en"] ?? "")
                         .font(.headline)
                         .foregroundColor(.black)
                     Spacer()
@@ -265,7 +265,9 @@ struct SCardView: View {
                         .frame(width: 60, height: 60)
                 }
             }
-            CachedAsyncImage(url: model.imageUrl!, placeholder: Image(systemName: "photo"))
+            if let imageUrl = model.imageUrl {
+                CachedAsyncImage(url: imageUrl, placeholder: Image(systemName: "photo"))
+            }
         }
         .padding()
         .background(Color.white)
@@ -277,12 +279,11 @@ struct SCardView: View {
         .shadow(radius: 3)
         .opacity(model.completed ? 0.8 : 1.0)
         .onAppear {
-            let langCode = viewModel.languageCode!
-            let text = model.textDict[langCode]!;
-            let audioDict = viewModel.audioUrlDict!
-            let urlString = audioDict[langCode]![text]!
-
-            guard let url = URL(string:urlString)  else { return }
+            guard let langCode = viewModel.languageCode,
+                  let text = model.textDict[langCode],
+                  let audioDict = viewModel.audioUrlDict,
+                  let urlString = audioDict[langCode]?[text],
+                  let url = URL(string: urlString) else { return }
             
             URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if let error = error {
@@ -418,8 +419,8 @@ struct SCardView: View {
     
     func validateSpeech() async {
         let transcript = speechRecognizer.transcription
-        let langCode = viewModel.languageCode!
-        let text = model.textDict[langCode]!;
+        guard let langCode = viewModel.languageCode,
+              let text = model.textDict[langCode] else { return }
         let trimmedText = trimmed(text.lowercased()).trimmingCharacters(in: .punctuationCharacters)
         let trimmedTranscript = trimmed(transcript.lowercased()).trimmingCharacters(in: .punctuationCharacters)
         let match = areStringsSimilar(trimmedText, trimmedTranscript)
@@ -464,10 +465,9 @@ struct SCardView: View {
             return matrix[m][n]
         }
         
-        let distance = levenshteinDistance(str1, str2)
         let maxLength = max(str1.count, str2.count)
-        let similarity = 1.0 - Double(distance) / Double(maxLength)
-        
+        guard maxLength > 0 else { return true }
+        let similarity = 1.0 - Double(levenshteinDistance(str1, str2)) / Double(maxLength)
         return similarity >= 0.85
     }
     

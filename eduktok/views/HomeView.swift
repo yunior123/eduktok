@@ -14,43 +14,51 @@ import OSLog
 typealias SKTransaction = StoreKit.Transaction
 
 
-private let logger = Logger(subsystem: "Eduktok", category: "HomeView")
+private let logger = Logger(subsystem: "OrignaL", category: "HomeView")
 
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
-    @State var isLoading: Bool = true
     @State private var isPro = false
     
     var body: some View {
-        VStack {
-            Spacer()
-            if let userModel = $viewModel.userModel.wrappedValue {
-                TabView {
-                    LanguageView(userModel: userModel, isPro: (isPro || userModel.hasLifetimeAccess))
-                        .tabItem {
-                            Label("Languages", systemImage: "globe")
-                        }
-                        .tag(0)
-                        .id(0)
-                    
-                    if (!(isPro || userModel.hasLifetimeAccess))
-                    {
-                        StoreKitProViewMP(userDocId: userModel.id)
+        ZStack {
+            OrignaLBackdrop()
+            VStack {
+                if let userModel = $viewModel.userModel.wrappedValue {
+                    TabView {
+                        LanguageView(userModel: userModel, isPro: (isPro || userModel.hasLifetimeAccess))
                             .tabItem {
-                                Label("Store", systemImage: "crown.fill")
+                                Label("Languages", systemImage: "globe")
                             }
-                            .tag(1)
-                            .id(1)
-                        
+                            .tag(0)
+                            .id(0)
+
+                        if !(isPro || userModel.hasLifetimeAccess) {
+                            StoreKitProViewMP(userDocId: userModel.id)
+                                .tabItem {
+                                    Label("Store", systemImage: "crown.fill")
+                                }
+                                .tag(1)
+                                .id(1)
+                        }
+                        SettingsView()
+                            .tabItem {
+                                Label("Settings", systemImage: "gear")
+                            }
+                            .tag(2)
+                            .id(2)
                     }
-                    SettingsView().tabItem {
-                        Label("Settings", systemImage: "gear")
-                    }.tag(2).id(2)
+                    .tint(OrignaLTheme.mint)
+                } else {
+                    ProgressView("Loading your journey...")
+                        .progressViewStyle(.circular)
+                        .tint(OrignaLTheme.mint)
+                        .foregroundStyle(OrignaLTheme.ice)
                 }
             }
         }
-        .navigationTitle("Eduktok")
+        .navigationTitle("OrignaL")
         .onAppear {
             Task {
                 try await viewModel.setupUser()
@@ -107,5 +115,3 @@ func requestPermissions() async{
 #Preview {
     HomeView()
 }
-
-

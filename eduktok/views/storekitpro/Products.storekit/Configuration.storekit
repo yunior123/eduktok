@@ -20,22 +20,22 @@
       "internalID" : "D6A50327",
       "localizations" : [
         {
-          "description" : "Unlock Eduktok forever – Your language journey awaits!",
+          "description" : "Unlock OrignaL forever – Your language journey awaits!",
           "displayName" : "Lifetime Access",
           "locale" : "en_CA"
         },
         {
-          "description" : "Unlock Eduktok forever – Your language journey awaits!",
+          "description" : "Unlock OrignaL forever – Your language journey awaits!",
           "displayName" : "Lifetime Access",
           "locale" : "en_US"
         },
         {
-          "description" : "Débloquez Eduktok pour toujours – Votre voyage linguistique vous attend !",
+          "description" : "Débloquez OrignaL pour toujours – Votre voyage linguistique vous attend !",
           "displayName" : "Accès à vie.",
           "locale" : "fr_CA"
         }
       ],
-      "productID" : "ca.eduktok.eduktok.lifetime",
+      "productID" : "ca.orignal.orignal.lifetime",
       "promotionalImageID" : "6C0D4373",
       "referenceName" : "Lifetime",
       "type" : "NonConsumable"

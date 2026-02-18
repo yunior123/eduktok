@@ -24,6 +24,7 @@ class AuthViewModel: ObservableObject {
             if let error = error {
                 self.errorMessage = error.localizedDescription
             } else {
+                self.password = ""
                 self.isSignedIn = true
             }
         }
@@ -48,7 +49,7 @@ class AuthViewModel: ObservableObject {
             if let error = error {
                 self.errorMessage = error.localizedDescription
             } else {
-                // Send verification email
+                self.password = ""
                 self.sendVerificationEmail()
             }
         }

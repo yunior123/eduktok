@@ -38,7 +38,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 
 @main
-struct eduktokApp: App {
+struct OrignaLApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some Scene {

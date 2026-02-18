@@ -14,22 +14,49 @@ struct VerifyEmailView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Please check your email and click the verification link.")
-                    .padding()
+            ZStack {
+                OrignaLBackdrop()
+                VStack(spacing: 14) {
+                    Image(systemName: "envelope.badge.fill")
+                        .font(.system(size: 54))
+                        .foregroundStyle(OrignaLTheme.mint)
 
-                if !isVerificationEmailSent {
-                    Button("Resend Verification Email") {
-                        authViewModel.sendVerificationEmail()
-                        isVerificationEmailSent = true // Update state
+                    Text("Verify Your Email")
+                        .font(.title2.bold())
+                        .foregroundStyle(OrignaLTheme.ice)
+                    Text("Please check your inbox and click the verification link.")
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(OrignaLTheme.ice.opacity(0.88))
+
+                    if !isVerificationEmailSent {
+                        Button("Resend Verification Email") {
+                            authViewModel.sendVerificationEmail()
+                            isVerificationEmailSent = true
+                        }
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .background(OrignaLTheme.buttonGradient)
+                        .foregroundStyle(Color.black)
+                        .font(.headline)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .accessibilityIdentifier("auth.verify.resendButton")
+                    } else {
+                        Text("Verification email sent")
+                            .foregroundStyle(OrignaLTheme.success)
+                            .font(.subheadline.bold())
+                            .accessibilityIdentifier("auth.verify.sentLabel")
                     }
-                } else {
-                    Text("Verification email sent")
+
+                    NavigationLink("Back to Sign Up", destination: SignUpView())
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(OrignaLTheme.ice)
+                        .padding(.top, 4)
+                        .accessibilityIdentifier("auth.verify.backToSignUp")
                 }
-                NavigationLink("Back to Sign Up", destination: SignUpView())
-                           .padding()
+                .padding(20)
+                .orignalGlassCard()
+                .padding(.horizontal, 18)
             }
-            .padding()
         }
     }
 }

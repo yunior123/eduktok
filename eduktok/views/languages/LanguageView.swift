@@ -12,61 +12,84 @@ import Firebase
 
 struct LanguageView: View {
     @State private var selectedLanguage = "English"
-    let languages = ["English","German", "French", "Spanish","Italian","Chinese","Portuguese","Russian","Japanese","Korean"]
+    private let languages = ["English", "German", "French", "Spanish", "Italian", "Chinese", "Portuguese", "Russian", "Japanese", "Korean"]
     let userModel: UserModel
     @StateObject private var viewModel = LanguageViewModel()
     let isPro: Bool
-    
+
     var body: some View {
         NavigationStack {
-            VStack {
-                ScrollView(.horizontal) {
-                    HStack(spacing: 12) {
-                        ForEach(languages, id: \.self) { language in
-                            LanguageButton(
-                                language: language,
-                                isSelected: language == selectedLanguage,
-                                action: {
+            ZStack {
+                OrignaLBackdrop()
+
+                VStack(alignment: .leading, spacing: 14) {
+                    hero
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(languages, id: \.self) { language in
+                                LanguageButton(
+                                    language: language,
+                                    isSelected: language == selectedLanguage,
+                                    action: {
                                     selectedLanguage = language
                                     userModel.learningLanguage = language
-                                    let db = Db()
                                     Task {
-                                        try await db.updateUser(user: userModel)
+                                        do {
+                                            try await Db().updateUser(user: userModel)
+                                        } catch {
+                                            print("Failed to update preferred language: \\(error.localizedDescription)")
+                                        }
                                     }
                                 }
                             )
+                                .accessibilityIdentifier("language.\(language.lowercased())")
+                            }
                         }
+                        .padding(.horizontal, 2)
                     }
-                    .padding(.horizontal, 16)
+
+                    CardGridView(
+                        unitProgress: calculateUnitProgress(for: selectedLanguage),
+                        units: viewModel.units.sorted { $0.unitNumber < $1.unitNumber },
+                        userModel: userModel,
+                        selectedLanguage: selectedLanguage,
+                        isPro: isPro
+                    )
                 }
-                CardGridView(
-                    unitProgress: calculateUnitProgress(for: selectedLanguage),
-                    units: $viewModel.units.wrappedValue.sorted { $0.unitNumber < $1.unitNumber },
-                    userModel: userModel,
-                    selectedLanguage: selectedLanguage,
-                    isPro: isPro
-                )
-                
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
             }
-            .onAppear{
+            .navigationTitle("Learn")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
                 selectedLanguage = userModel.learningLanguage ?? "English"
-                Task{
-                    viewModel.fetchUnits()
-                }
+                viewModel.fetchUnits()
             }
-            .padding(.top, 0)
         }
     }
-    
+
+    private var hero: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("From first sounds to full conversations")
+                .font(.system(size: 24, weight: .black, design: .rounded))
+                .foregroundStyle(OrignaLTheme.ice)
+            Text("Language: \(selectedLanguage)")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(OrignaLTheme.ice.opacity(0.88))
+        }
+        .padding(14)
+        .orignalGlassCard()
+    }
+
     private func calculateUnitProgress(for language: String) -> [String: Int] {
         guard let languageData = userModel.languageProgress?[language] else { return [:] }
-        
-        var unitProgress: [String: Int] = [:]
+
+        var progress: [String: Int] = [:]
         for (unitName, lessons) in languageData {
-            let completedLessons = lessons.filter { $1 == true }.count // Count completed lessons
-            unitProgress[unitName] = completedLessons
+            progress[unitName] = lessons.filter { $1 }.count
         }
-        return unitProgress
+        return progress
     }
 }
 
@@ -74,22 +97,32 @@ struct LanguageButton: View {
     let language: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(language)
-                .font(.system(size: 16, weight: isSelected ? .bold : .regular))
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(isSelected ? Color.blue : Color.gray.opacity(0.5))
+                    isSelected
+                    ? OrignaLTheme.buttonGradient
+                    : LinearGradient(
+                        colors: [Color.white.opacity(0.18), Color.white.opacity(0.10)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
-                .foregroundColor(isSelected ? .white : .primary)
+                .foregroundStyle(isSelected ? Color.black : OrignaLTheme.ice)
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule()
+                        .stroke(Color.white.opacity(isSelected ? 0 : 0.2), lineWidth: 1)
+                )
         }
+        .buttonStyle(.plain)
     }
 }
-
 
 struct CardGridView: View {
     let unitProgress: [String: Int]
@@ -97,82 +130,59 @@ struct CardGridView: View {
     let userModel: UserModel
     let selectedLanguage: String
     let isPro: Bool
-    
-    // Calculate rows based on dynamic column count
-    private func rows(in geometry: GeometryProxy) -> [[UnitModel]] {
-        let minCardWidth: CGFloat = 150
-        let spacing: CGFloat = 10
-        let availableWidth = geometry.size.width - 32 // Account for horizontal padding
-        let optimalColumnCount = max(2, Int(availableWidth / (minCardWidth + spacing)))
-        
-        var result: [[UnitModel]] = []
-        var currentRow: [UnitModel] = []
-        
-        for unit in units {
-            currentRow.append(unit)
-            if currentRow.count == optimalColumnCount {
-                result.append(currentRow)
-                currentRow = []
-            }
-        }
-        
-        if !currentRow.isEmpty {
-            result.append(currentRow)
-        }
-        
-        return result
-    }
-    
+
+    private let freeUnitsCount = 25
+
     var body: some View {
-        GeometryReader { geometry in
+        if units.isEmpty {
+            VStack(spacing: 10) {
+                ProgressView()
+                    .tint(OrignaLTheme.mint)
+                Text("Preparing your lessons...")
+                    .foregroundStyle(OrignaLTheme.ice.opacity(0.85))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
             ScrollView {
-                Grid(horizontalSpacing: 10, verticalSpacing: 15) {
-                    let gridRows = rows(in: geometry)
-                    ForEach(gridRows.indices, id: \.self) { rowIndex in
-                        GridRow {
-                            ForEach(gridRows[rowIndex], id: \.id) { unit in
-                                ZStack {
-                                    if isPro || (unit.unitNumber - 1) < units.count / 2 {
-                                        NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
-                                            UnitCardView(
-                                                unit: unit,
-                                                progress: unitProgress[unit.id!] ?? 0,
-                                                userModel: userModel,
-                                                selectedLanguage: selectedLanguage
-                                            )
-                                        }
-                                    } else {
-                                        UnitCardView(
-                                            unit: unit,
-                                            progress: unitProgress[unit.id!] ?? 0,
-                                            userModel: userModel,
-                                            selectedLanguage: selectedLanguage
-                                        )
-                                        .overlay(
-                                            Color.black.opacity(0.5)
-                                                .cornerRadius(10)
-                                                .overlay(
-                                                    VStack {
-                                                        Image(systemName: "crown.fill")
-                                                            .foregroundColor(.yellow)
-                                                            .font(.title)
-                                                        Text("Unlock with premium")
-                                                            .foregroundColor(.white)
-                                                            .font(.headline)
-                                                            .padding()
-                                                    }
-                                                    .padding()
-                                                )
-                                        )
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
-                            }
-                        }
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 164), spacing: 14)], spacing: 14) {
+                    ForEach(units, id: \.id) { unit in
+                        unitCard(unit)
                     }
                 }
-                .padding(.horizontal)
+                .padding(.vertical, 2)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func unitCard(_ unit: UnitModel) -> some View {
+        let key = unit.id ?? "unit_\(unit.unitNumber)"
+        let progress = unitProgress[key] ?? 0
+        let canAccess = isPro || unit.unitNumber <= freeUnitsCount
+
+        if canAccess {
+            NavigationLink(destination: LessonView(unit: unit, userModel: userModel, selectedLanguage: selectedLanguage)) {
+                UnitCardView(unit: unit, progress: progress, selectedLanguage: selectedLanguage)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("unit.card.\(unit.unitNumber)")
+        } else {
+            UnitCardView(unit: unit, progress: progress, selectedLanguage: selectedLanguage)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(Color.black.opacity(0.52))
+                        .overlay {
+                            VStack(spacing: 8) {
+                                Image(systemName: "crown.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(OrignaLTheme.warning)
+                                Text("Lifetime unlock")
+                                    .font(.subheadline.weight(.bold))
+                                    .foregroundStyle(OrignaLTheme.ice)
+                            }
+                        }
+                }
+                .accessibilityIdentifier("unit.locked.\(unit.unitNumber)")
         }
     }
 }
@@ -180,42 +190,43 @@ struct CardGridView: View {
 struct UnitCardView: View {
     let unit: UnitModel
     let progress: Int
-    let userModel: UserModel
-    @State private var showDeleteAlert = false // State to control the alert
     let selectedLanguage: String
-    
-    func getTitle() -> String {
-        let langCode = convertToLanguageCode(selectedLanguage)!;
-        let title = unit.title[langCode]!
-        return title
+    private let expectedLessons = 30
+
+    private var localizedTitle: String {
+        let code = convertToLanguageCode(selectedLanguage) ?? "en"
+        return unit.title[code] ?? unit.title["en"] ?? "Build your language foundation"
     }
-    
+
+    private var progressRatio: Double {
+        min(1, max(0, Double(progress) / Double(expectedLessons)))
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(unit.unitName)
-                .font(.headline)
-                .foregroundColor(.blue)
-            Text(getTitle())
-                .lineLimit(2)
-                .foregroundColor(.blue)
-            
+        VStack(alignment: .leading, spacing: 10) {
             CachedAsyncImage(url: unit.imageUrl, placeholder: Image(systemName: "photo"))
-                .frame(maxHeight: 150) // Constrain image height
-                .clipped()
-            
-            Text("Progress: \(progress)/\(40)")
-                .foregroundColor(.blue)
-                .font(.caption).bold()
-            
+                .frame(height: 108)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text(unit.unitName)
+                .font(.caption.weight(.heavy))
+                .foregroundStyle(OrignaLTheme.mint)
+
+            Text(localizedTitle)
+                .font(.headline.weight(.bold))
+                .foregroundStyle(OrignaLTheme.ice)
+                .lineLimit(2)
+
+            ProgressView(value: progressRatio)
+                .tint(OrignaLTheme.mint)
+
+            Text("\(progress)/\(expectedLessons) lessons")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(OrignaLTheme.ice.opacity(0.88))
         }
-        .padding()
-        .frame(maxWidth: 250, maxHeight: 300) // Set max width and height
-        .background(Color.white)
-        .cornerRadius(10)
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray, lineWidth: 1)
-        )
-        .shadow(radius: 1)
+        .padding(12)
+        .frame(maxWidth: .infinity, minHeight: 250, alignment: .topLeading)
+        .orignalGlassCard()
     }
 }

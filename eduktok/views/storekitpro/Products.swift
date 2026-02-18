@@ -8,5 +8,5 @@
 import Foundation
 
 enum Products {
-    static let lifetime: String = "ca.eduktok.eduktok.lifetime"
+    static let lifetime: String = "ca.orignal.orignal.lifetime"
 }

@@ -31,97 +31,180 @@ struct SignUpView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView  {
-                VStack {
-                    Image("logo")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 200)
-                    TextField("Email", text: $authViewModel.email) // Bind to view model's property
-                        .frame(width: 250, height: 50)
-                        .textContentType(.emailAddress) // Important
-                        .keyboardType(.emailAddress) // Optional, but recommended
-                    SecureField("Password", text: $authViewModel.password)
-                        .frame(width: 250, height: 50)
-                        .textContentType(.newPassword) // Important
-                        .textContentType(.oneTimeCode)  // Helps password autofill
-                    if authMode == .signUp { // Conditionally show confirm password
-                        SecureField("Confirm Password", text: $confirmPassword)
-                            .frame(width: 250, height: 50)
-                            .textContentType(.newPassword)
-                            .textContentType(.oneTimeCode)
+            ScrollView {
+                VStack(spacing: 20) {
+                    VStack(spacing: 10) {
+                        Image("logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 116, height: 116)
+                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 30, style: .continuous)
+                                    .stroke(OrignaLTheme.ice.opacity(0.6), lineWidth: 2)
+                            )
+
+                        Text("OrignaL")
+                            .font(.system(size: 36, weight: .black, design: .rounded))
+                            .foregroundStyle(OrignaLTheme.ice)
+
+                        Text("Learn the way babies do: hear, see, repeat.")
+                            .font(.subheadline.weight(.medium))
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(OrignaLTheme.ice.opacity(0.90))
                     }
-                    Button(authMode == .signIn ? "Sign In" : "Sign Up") {
-                        if authMode == .signIn {
-                            authViewModel.signIn()
-                        } else {
-                            // Validate confirm password
-                            let password = authViewModel.password
-                            if password == confirmPassword {
-                                authViewModel.signUp()
+                    .padding(.top, 14)
+                    .accessibilityIdentifier("auth.hero")
+
+                    VStack(spacing: 12) {
+                        authTextField(icon: "envelope", placeholder: "Email", text: $authViewModel.email)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
+                            .accessibilityIdentifier("auth.emailField")
+
+                        authSecureField(icon: "lock", placeholder: "Password", text: $authViewModel.password)
+                            .accessibilityIdentifier("auth.passwordField")
+
+                        if authMode == .signUp {
+                            authSecureField(icon: "lock.shield", placeholder: "Confirm Password", text: $confirmPassword)
+                                .accessibilityIdentifier("auth.confirmPasswordField")
+                        }
+
+                        Button(authMode == .signIn ? "Sign In" : "Create Account") {
+                            if authMode == .signIn {
+                                authViewModel.signIn()
                             } else {
-                                authViewModel.errorMessage = "Passwords don't match"
+                                if authViewModel.password == confirmPassword {
+                                    authViewModel.signUp()
+                                } else {
+                                    authViewModel.errorMessage = "Passwords don't match"
+                                }
                             }
                         }
-                    }
-                    .frame(width: 250, height: 50)
-                    NavigationLink(destination: ForgotPasswordView()) {
-                        Text("Forgot Password?")
-                            .frame(width: 250, height: 50)
-                            .foregroundColor(.blue)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                    }
-                    if let errorMessage = authViewModel.errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    }
-                    #warning("fix the apple button, it is always showing sign up")
-                    SignInWithAppleButton(authMode == .signIn ? .signIn : .signUp) { request in
-                        let nonce = randomNonceString()
-                        currentNonce = nonce
-                        request.requestedScopes = [.fullName, .email]
-                        request.nonce = sha256(nonce)
-                    } onCompletion: { result in
-                        authViewModel.handleSignInResultApple(result,currentNonce)
-                    }
-                    .signInWithAppleButtonStyle(.black)
-                    .frame(width: 250, height: 50)
-                    Button(action: { authViewModel.googleSignIn() }) {
-                        HStack {
-                            Image("google") // Assuming you've named the image 'GoogleLogo' in assets
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20, height: 20) // Adjust sizing as needed
-                            
-                            Text(authMode == .signIn ? "Sign In with Google" : "Sign Up with Google")
-                                .font(.system(.body, design: .default).weight(.semibold))
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity, minHeight: 52)
+                        .background(OrignaLTheme.buttonGradient)
+                        .foregroundStyle(Color.black)
+                        .font(.headline)
+                        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                        .accessibilityIdentifier("auth.primaryButton")
+
+                        NavigationLink(destination: ForgotPasswordView()) {
+                            Text("Forgot Password?")
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                                .background(Color.white.opacity(0.12))
+                                .foregroundStyle(OrignaLTheme.ice)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         }
-                    }
-                    .frame(width: 250, height: 50)
-                    .background(Color.white) // Google buttons are often white
-                    .foregroundColor(.black)  // Black foreground text
-                    .clipShape(RoundedRectangle(cornerRadius: 5)) // Slightly rounded corners
-                    .overlay( // Add a subtle border
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(.gray.opacity(0.5), lineWidth: 0.5)
-                    )
-                    
-                    HStack {
-                        Text(authMode == .signIn ? "New User?" : "Already have an account?")
-                        Button(authMode == .signIn ? "Sign Up" : "Sign In") {
-                            authMode.toggle()
+                        .accessibilityIdentifier("auth.forgotPasswordButton")
+
+                        if let errorMessage = authViewModel.errorMessage {
+                            Text(errorMessage)
+                                .font(.footnote.bold())
+                                .foregroundStyle(OrignaLTheme.rose)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .accessibilityIdentifier("auth.errorText")
                         }
+
+                        HStack(spacing: 10) {
+                            Capsule()
+                                .fill(Color.white.opacity(0.25))
+                                .frame(height: 1)
+                            Text("OR")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(OrignaLTheme.ice.opacity(0.85))
+                            Capsule()
+                                .fill(Color.white.opacity(0.25))
+                                .frame(height: 1)
+                        }
+
+                        #warning("fix the apple button, it is always showing sign up")
+                        SignInWithAppleButton(authMode == .signIn ? .signIn : .signUp) { request in
+                            let nonce = randomNonceString()
+                            currentNonce = nonce
+                            request.requestedScopes = [.fullName, .email]
+                            request.nonce = sha256(nonce)
+                        } onCompletion: { result in
+                            authViewModel.handleSignInResultApple(result, currentNonce)
+                        }
+                        .signInWithAppleButtonStyle(.white)
+                        .frame(maxWidth: .infinity, minHeight: 50)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                        )
+                        .accessibilityIdentifier("auth.appleButton")
+
+                        Button(action: { authViewModel.googleSignIn() }) {
+                            HStack(spacing: 10) {
+                                Image("google")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                                Text(authMode == .signIn ? "Sign In with Google" : "Sign Up with Google")
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.white)
+                            .foregroundStyle(Color.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        }
+                        .accessibilityIdentifier("auth.googleButton")
+
+                        HStack(spacing: 6) {
+                            Text(authMode == .signIn ? "New user?" : "Already have an account?")
+                                .foregroundStyle(OrignaLTheme.ice.opacity(0.85))
+                            Button(authMode == .signIn ? "Sign Up" : "Sign In") {
+                                authMode.toggle()
+                                authViewModel.errorMessage = nil
+                            }
+                            .fontWeight(.bold)
+                            .foregroundStyle(OrignaLTheme.mint)
+                            .accessibilityIdentifier("auth.toggleModeButton")
+                        }
+                        .font(.subheadline)
                     }
+                    .padding(18)
+                    .orignalGlassCard()
                 }
-                
-                
+                .padding(.horizontal, 18)
+                .padding(.bottom, 20)
             }
-            .padding()
         }
-        
+        .tint(OrignaLTheme.mint)
     }
-    
+
+    @ViewBuilder
+    private func authTextField(icon: String, placeholder: String, text: Binding<String>) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .foregroundStyle(OrignaLTheme.ice.opacity(0.85))
+                .frame(width: 18)
+            TextField(placeholder, text: text)
+                .foregroundStyle(OrignaLTheme.ice)
+        }
+        .padding(.horizontal, 14)
+        .frame(height: 50)
+        .background(Color.white.opacity(0.11))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    @ViewBuilder
+    private func authSecureField(icon: String, placeholder: String, text: Binding<String>) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .foregroundStyle(OrignaLTheme.ice.opacity(0.85))
+                .frame(width: 18)
+            SecureField(placeholder, text: text)
+                .foregroundStyle(OrignaLTheme.ice)
+        }
+        .padding(.horizontal, 14)
+        .frame(height: 50)
+        .background(Color.white.opacity(0.11))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
 }
 
 #Preview {

@@ -19,8 +19,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack   {
             ZStack {
-                Color(.systemGroupedBackground)
-                    .edgesIgnoringSafeArea(.all)
+                OrignaLBackdrop()
                 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -62,7 +61,7 @@ struct SettingsView: View {
                 }
             }
             .confirmationDialog(
-                "Sign out of Eduktok",
+                "Sign out of OrignaL",
                 isPresented: $showSignOutConfirmation,
                 titleVisibility: .visible
             ) {
@@ -91,17 +90,16 @@ struct ProfileHeaderView: View {
                 Text(user.username)
                     .font(.title2)
                     .fontWeight(.bold)
+                    .foregroundStyle(OrignaLTheme.ice)
                 Text(user.email)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(OrignaLTheme.ice.opacity(0.82))
             }
             
             Spacer()
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .orignalGlassCard()
     }
 }
 
@@ -117,9 +115,8 @@ struct SettingsSectionView<Content: View>: View {
         VStack(spacing: 10) {
             content()
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .padding(.vertical, 2)
+        .orignalGlassCard()
     }
 }
 
@@ -178,21 +175,22 @@ struct SettingsRowView: View {
     var body: some View {
         HStack {
             Image(systemName: icon)
-                .foregroundColor(.blue)
+                .foregroundStyle(OrignaLTheme.mint)
                 .frame(width: 30)
             
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.headline)
+                    .foregroundStyle(OrignaLTheme.ice)
                 Text(value)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(OrignaLTheme.ice.opacity(0.85))
             }
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .foregroundColor(.secondary)
+                .foregroundStyle(OrignaLTheme.ice.opacity(0.6))
         }
     }
 }
@@ -230,19 +228,21 @@ struct SignOutSection: View {
             Button(action: { showSignOutConfirmation = true }) {
                 HStack {
                     Image(systemName: "arrow.right.square")
-                        .foregroundColor(.blue)
+                        .foregroundStyle(OrignaLTheme.warning)
                         .frame(width: 30)
                     
                     Text("Sign Out")
                         .font(.headline)
+                        .foregroundStyle(OrignaLTheme.ice)
                     
                     Spacer()
                     
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(OrignaLTheme.ice.opacity(0.6))
                 }
                 .padding()
             }
+            .accessibilityIdentifier("settings.signOutButton")
         }
     }
 }
@@ -257,16 +257,17 @@ struct DangerZoneSection: View {
         VStack(alignment: .leading, spacing: 15) {
             Text("Danger Zone")
                 .font(.headline)
-                .foregroundColor(.red)
+                .foregroundStyle(OrignaLTheme.rose)
             
             Button(action: { showDeleteConfirmation = true }) {
                 HStack {
                     Image(systemName: "trash")
-                        .foregroundColor(.red)
+                        .foregroundStyle(OrignaLTheme.rose)
                     Text("Delete Account")
-                        .foregroundColor(.red)
+                        .foregroundStyle(OrignaLTheme.rose)
                 }
             }
+            .accessibilityIdentifier("settings.deleteAccountButton")
             .confirmationDialog(
                 "Are you sure?",
                 isPresented: $showDeleteConfirmation,
@@ -299,10 +300,10 @@ struct HelpFloatingButton: View {
                     Image(systemName: "questionmark.circle.fill")
                         .resizable()
                         .frame(width: 60, height: 60)
-                        .foregroundColor(.blue)
-                        .background(Color.white)
+                        .foregroundStyle(OrignaLTheme.mint)
+                        .background(Color.white.opacity(0.2))
                         .clipShape(Circle())
-                        .shadow(radius: 10)
+                        .shadow(color: .black.opacity(0.22), radius: 10)
                         .padding()
                 }
             }

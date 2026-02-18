@@ -10,6 +10,7 @@ import CryptoKit
 import FirebaseFirestore 
 import Firebase
 import FirebaseStorage
+import SwiftUI
 
 //func createImageFilePath(unit: UnitModel, lessonNumber: Int, id: String) -> String {
 //  return "images/unit_\(unit.unitNumber)_lesson_\(lessonNumber)_id_\(id).jpg"
@@ -74,6 +75,87 @@ enum APIError: Error {
     case invalidResponse(URLResponse)
     case decodingError
     case unknownError(Error)
+}
+
+enum OrignaLTheme {
+    static let navy = Color(red: 0.04, green: 0.13, blue: 0.30)
+    static let cobalt = Color(red: 0.07, green: 0.29, blue: 0.58)
+    static let aurora = Color(red: 0.15, green: 0.60, blue: 0.86)
+    static let ice = Color(red: 0.88, green: 0.96, blue: 1.00)
+    static let mint = Color(red: 0.47, green: 0.90, blue: 0.92)
+    static let rose = Color(red: 0.96, green: 0.44, blue: 0.62)
+    static let success = Color(red: 0.43, green: 0.91, blue: 0.62)
+    static let warning = Color(red: 1.00, green: 0.81, blue: 0.34)
+
+    static let pageGradient = LinearGradient(
+        colors: [navy, cobalt, aurora],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    static let surfaceGradient = LinearGradient(
+        colors: [
+            Color.white.opacity(0.17),
+            Color.white.opacity(0.08)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    static let buttonGradient = LinearGradient(
+        colors: [mint, aurora],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
+}
+
+enum UITestLaunchFlags {
+    static var isAnyUITestRun: Bool {
+        ProcessInfo.processInfo.arguments.contains("-ui-testing") ||
+        ProcessInfo.processInfo.arguments.contains("-ui-testing-real")
+    }
+
+    static var usesRealDatabaseFlow: Bool {
+        ProcessInfo.processInfo.arguments.contains("-ui-testing-real")
+    }
+}
+
+struct OrignaLBackdrop: View {
+    var body: some View {
+        ZStack {
+            OrignaLTheme.pageGradient
+                .ignoresSafeArea()
+            Circle()
+                .fill(OrignaLTheme.mint.opacity(0.18))
+                .frame(width: 260, height: 260)
+                .offset(x: 130, y: -290)
+                .blur(radius: 15)
+            Circle()
+                .fill(OrignaLTheme.ice.opacity(0.18))
+                .frame(width: 300, height: 300)
+                .offset(x: -150, y: 320)
+                .blur(radius: 18)
+        }
+    }
+}
+
+struct OrignaLGlassCardModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(OrignaLTheme.surfaceGradient)
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .shadow(color: Color.black.opacity(0.22), radius: 18, x: 0, y: 10)
+    }
+}
+
+extension View {
+    func orignalGlassCard() -> some View {
+        modifier(OrignaLGlassCardModifier())
+    }
 }
 
 // Firebase Firestore Upload

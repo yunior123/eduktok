@@ -20,22 +20,22 @@
       "internalID" : "6739475588",
       "localizations" : [
         {
-          "description" : "Get a lifetime subscription to Eduktok ",
+          "description" : "Get a lifetime subscription to OrignaL ",
           "displayName" : "Lifetime",
           "locale" : "en_US"
         },
         {
-          "description" : "Obtenez un abonnement à vie à Eduktok.",
+          "description" : "Obtenez un abonnement à vie à OrignaL.",
           "displayName" : "Lifetime",
           "locale" : "fr"
         },
         {
-          "description" : "Get a lifetime subscription to Eduktok ",
+          "description" : "Get a lifetime subscription to OrignaL ",
           "displayName" : "Lifetime",
           "locale" : "en_CA"
         }
       ],
-      "productID" : "ca.eduktok.eduktok.lifetime",
+      "productID" : "ca.orignal.orignal.lifetime",
       "referenceName" : "Lifetime",
       "type" : "NonConsumable"
     }

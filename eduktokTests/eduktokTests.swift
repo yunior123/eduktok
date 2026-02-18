@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import eduktok
 
 final class eduktokTests: XCTestCase {
 

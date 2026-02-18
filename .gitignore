@@ -1,0 +1,100 @@
+# Xcode
+.DS_Store
+*/build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# CocoaPods
+Pods/
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Firebase
+GoogleService-Info.plist
+
+# Firebase Admin SDK service account keys — NEVER commit these
+*firebase-adminsdk*.json
+service-account*.json
+
+# Firebase CLI project config
+.firebaserc
+firebase.json
+
+# Content data files (large, not app source)
+units.json
+units_data/
+
+# Upload scripts (reference or contain secrets)
+upload_*.py
+
+# App Images (keep structure but ignore large files in development)
+app-images/**/*.psd
+app-images/**/*.ai
+app-images/**/*.sketch
+app-images/**/.DS_Store
+
+# Content generation output
+content-output/
+*.json.bak
+
+# Scripts temporary files
+scripts/*.log
+scripts/temp/
+
+# Node modules (if using npm for scripts)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk

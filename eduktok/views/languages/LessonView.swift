@@ -119,7 +119,7 @@ struct LessonView: View {
             } else {
                 VStack {
                     let currentLessonModel = lessons[currentLesson]
-                    let langCode = convertToLanguageCode(selectedLanguage)!
+                    let langCode = convertToLanguageCode(selectedLanguage) ?? "en"
                     let audioDict = currentLessonModel.audioUrlDict
                     
                     if isCompleted || isUnitComplete() {
@@ -136,6 +136,12 @@ struct LessonView: View {
                             currentLesson = 0
                         }
                     } else {
+                        Text("Unit \(unit.unitNumber) • Lesson \(currentLesson + 1)")
+                            .font(.subheadline.bold())
+                            .foregroundStyle(OrignaLTheme.ice)
+                            .padding(.top, 8)
+                            .accessibilityIdentifier("lesson.progressLabel")
+
                         // Your existing lesson type checks and views...
                         if let listeningModel = currentLessonModel as? GListeningModel {
                             GListeningView(model: listeningModel,
@@ -159,6 +165,42 @@ struct LessonView: View {
                                           userModel: userModel)
                             .id(currentLesson)
                         }
+
+                        #if DEBUG
+                        if UITestLaunchFlags.usesRealDatabaseFlow {
+                            HStack(spacing: 10) {
+                                Button("Test Complete Lesson") {
+                                    nextView()
+                                }
+                                .buttonStyle(.plain)
+                                .font(.footnote.bold())
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 9)
+                                .background(OrignaLTheme.buttonGradient)
+                                .foregroundStyle(Color.black)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                .accessibilityIdentifier("lesson.testCompleteButton")
+
+                                Button("Test Complete Unit") {
+                                    Task {
+                                        for index in currentLesson..<lessons.count {
+                                            await updateLanguageProgress(completedLessonIndex: index)
+                                        }
+                                        isCompleted = true
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .font(.footnote.bold())
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 9)
+                                .background(Color.white.opacity(0.14))
+                                .foregroundStyle(OrignaLTheme.ice)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                .accessibilityIdentifier("lesson.testCompleteUnitButton")
+                            }
+                            .padding(.top, 6)
+                        }
+                        #endif
                     }
                     
                     // Lesson navigation buttons
@@ -169,7 +211,7 @@ struct LessonView: View {
                                     HStack(spacing: 15) {
                                         // Add leading spacer for initial padding
                                         ForEach(0..<lessons.count, id: \.self) { lessonIndex in
-                                            let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id!]?[getLessonId(index: lessonIndex)]) != nil)
+                                            let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id ?? ""]?[getLessonId(index: lessonIndex)]) != nil)
                                             
                                             LessonButton(lessonNumber: lessonIndex + 1,
                                                          isCompleted: isLessonCompleted,
@@ -222,8 +264,9 @@ struct LessonView: View {
     }
     
     private func findFirstIncompleteLessonIndex() -> Int? {
-        guard let languageProgress = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage],
-              let unitProgress = languageProgress[unit.id!] else { return nil }
+        guard let unitId = unit.id,
+              let languageProgress = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage],
+              let unitProgress = languageProgress[unitId] else { return nil }
         
         for lessonIndex in 0..<lessons.count {
             let lessonId = getLessonId(index: lessonIndex)
@@ -253,21 +296,20 @@ struct LessonView: View {
     
     func nextView() {
         Task {
+            let completedIndex = currentLesson
             if currentLesson < lessons.count - 1 {
                 currentLesson += 1
-                await updateLanguageProgress(completedLessonIndex: currentLesson - 1)
             } else {
-                await updateLanguageProgress(completedLessonIndex: currentLesson)
-            }
-            if isUnitComplete() {
                 isCompleted = true
             }
+            await updateLanguageProgress(completedLessonIndex: completedIndex)
         }
     }
     
     private func isUnitComplete() -> Bool {
-        guard let languageProgress = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage],
-              let unitProgress = languageProgress[unit.id!] else { return false }
+        guard let unitId = unit.id,
+              let languageProgress = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage],
+              let unitProgress = languageProgress[unitId] else { return false }
         
         for lessonIndex in 0..<lessons.count {
             let lessonId = getLessonId(index: lessonIndex)
@@ -280,6 +322,7 @@ struct LessonView: View {
     
     
     func updateLanguageProgress(completedLessonIndex: Int) async -> Void {
+        guard let unitId = unit.id else { return }
         let db = Db()
         do {
             let updatedUser = try await db.findUser(email: userModel.email)
@@ -287,10 +330,10 @@ struct LessonView: View {
                 return
             }
             var languageData = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage] ?? [:]
-            var unitData = languageData[unit.id!] ?? [:]
+            var unitData = languageData[unitId] ?? [:]
             let id = getLessonId(index: completedLessonIndex)
             unitData[id] = true // Mark lesson as completed
-            languageData[unit.id!] = unitData
+            languageData[unitId] = unitData
             var languageProgress = userModel.languageProgress ?? [:]
             languageProgress[userModel.learningLanguage ?? selectedLanguage] = languageData
             let newUser = userModel.copyWith(languageProgress: languageProgress)
@@ -304,7 +347,7 @@ struct LessonView: View {
         catch {
             print(error.localizedDescription)
         }
-        
+
     }
     
     struct CompletionView: View {
@@ -426,17 +469,19 @@ struct LessonView: View {
         }
         
         private func resetUnitProgress() async throws {
+            guard let unitId = unit.id else { return }
             let db = Db()
-            guard var languageData = userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage] else { return }
-            
-            var unitData = languageData[unit.id!] ?? [:]
+            guard let freshUser = try await db.findUser(email: userModel.email) else { return }
+            guard var languageData = freshUser.languageProgress?[freshUser.learningLanguage ?? selectedLanguage] else { return }
+
+            var unitData = languageData[unitId] ?? [:]
             for lessonIndex in 0..<lessons.count {
                 unitData[lessons[lessonIndex].id] = nil // Clear lesson data
             }
-            languageData[unit.id!] = unitData
-            var languageProgress = userModel.languageProgress ?? [:]
-            languageProgress[userModel.learningLanguage ?? selectedLanguage] = languageData
-            let newUser = userModel.copyWith(languageProgress: languageProgress)
+            languageData[unitId] = unitData
+            var languageProgress = freshUser.languageProgress ?? [:]
+            languageProgress[freshUser.learningLanguage ?? selectedLanguage] = languageData
+            let newUser = freshUser.copyWith(languageProgress: languageProgress)
             try await db.updateUser(user: newUser)
         }
     }
@@ -593,7 +638,7 @@ struct NoLessonsView: View {
 //                    ScrollView(.horizontal, showsIndicators: false) {
 //                        HStack(spacing: 15) {
 //                            ForEach(0...unit.lessons.count - 1, id: \.self) { lessonIndex in
-//                                let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id!]?[getLessonId(index: lessonIndex)]) != nil)
+//                                let isLessonCompleted = ((userModel.languageProgress?[userModel.learningLanguage ?? selectedLanguage]?[unit.id ?? ""]?[getLessonId(index: lessonIndex)]) != nil)
 //
 //                                LessonButton(lessonNumber: lessonIndex + 1, isCompleted: isLessonCompleted, currentLesson: currentLesson)
 //                                    .onTapGesture {
